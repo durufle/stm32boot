@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stm32boot"
+authors = [
+    {name = "Laurent Bonnet", email = "laurent.woolcap@free.fr"}
+]
+description = "Usage of STM32 Bootloader command over scaffold v1.1 from ledger"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.8"
+dependencies = [
+    "intelhex",
+    "donjon-scaffold",
+    "progressbar2"
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+]
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+exclude = ['firmwares*', 'tests*', 'venv*']
+
+[tool.setuptools]
+include-package-data = true
+
+[project.scripts]
+stm32boot = "stm32boot.__main__:main"
+
+[project.urls]
+Home = "https://github.com/durufle/stm32boot"
+BugTracker = "https://github.com/durufle/stm32boot/issues"
+SourceCode = "https://github.com/durufle/stm32boot"
+

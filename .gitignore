@@ -3,4 +3,5 @@ dist/
 *.egg-info/
 tox/
 __pycache__/
-
+.idea/
+venv/
