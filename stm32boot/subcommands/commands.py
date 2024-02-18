@@ -1,11 +1,27 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2023-2024 Laurent Bonnet, 2024 python-gitlab team
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import sys
 import os
 import argparse
-from .donjon import STM32, CommandError, DataLengthError, PageIndexError
+from pathlib import Path
 from scaffold import Scaffold
 from intelhex import IntelHex
-from pathlib import Path
+from .donjon import STM32, CommandError
 
 
 def auto_int(x):
@@ -15,6 +31,7 @@ def auto_int(x):
 
 
 def valid_file(param):
+    """valid the given file extension"""
     base, ext = os.path.splitext(param)
     if ext.lower() not in ('.bin', '.hex'):
         raise argparse.ArgumentTypeError('File must have a bin or hex extension')
@@ -22,6 +39,9 @@ def valid_file(param):
 
 
 class Commands:
+    """
+    Class Commands
+    """
     def __init__(self, arguments):
         self.scaffold = None
         self.loader = None
@@ -30,7 +50,10 @@ class Commands:
         self.config = self.parse_arguments(arguments)
 
     def parse_arguments(self, arguments):
-        """Parse the given command-line arguments and return the configuration."""
+        """
+        Parse the given command-line arguments and return the configuration.
+        :param arguments: command line arguments
+        """
 
         parser = argparse.ArgumentParser(prog="stm32boot")
         subparsers = parser.add_subparsers()
@@ -161,6 +184,9 @@ class Commands:
         return parser.parse_args(arguments)
 
     def connect(self):
+        """
+        stm32 target bootloader connexion through donjon-scaffold board.
+        """
         try:
             # Connect to Scaffold board
             self.scaffold = Scaffold(self.config.port)
@@ -172,6 +198,11 @@ class Commands:
             sys.exit(-1)
 
     def get_command(self, args):
+        """
+        bootloader get command
+
+        :param args:  Command argument
+        """
         if args.identifier:
             self.get_id()
         if args.version:
@@ -183,18 +214,35 @@ class Commands:
         return self.loader.get()
 
     def get_id(self):
+        """
+        bootloader get_id
+        """
         return self.loader.get_id()
 
     def get_version(self):
+        """
+        bootloader get version
+        """
         return self.loader.get_version()
 
     def get_uid(self):
+        """
+        bootloader get uid
+        """
         return self.loader.get_uid(self.config.family)
 
     def get_flash_size(self):
+        """
+        bootloader get flash size command
+        """
         return self.loader.get_flash_size(self.config.family)
 
     def readout(self, args):
+        """
+        bootloader readout command
+
+        :param args:  Command argument
+        """
         if args.unprotect:
             try:
                 self.loader.readout_unprotect()
@@ -213,6 +261,11 @@ class Commands:
                 sys.exit(1)
 
     def read(self, args):
+        """
+        bootloader read memory command
+
+        :param args:  Command argument
+        """
         data = self.loader.read_memory_data(args.address, args.length)
         ih = IntelHex()
         ih.frombytes(data, args.address)
@@ -222,6 +275,11 @@ class Commands:
             ih.write_hex_file(args.file)
 
     def write(self, args):
+        """
+        bootloader write memory command
+
+        :param args:  Command argument
+        """
         ih = IntelHex()
         if Path(args.file).suffix in ['.BIN', '.bin']:
             ih.loadbin(args.file, offset=args.address)
@@ -237,6 +295,11 @@ class Commands:
             self.loader.debug(0, "Verification successfully" if (data == reload) else "Verification failed")
 
     def erase(self, args):
+        """
+        bootloader erase memory command
+
+        :param args:  Command argument
+        """
         try:
             if self.loader.extended_erase:
                 if args.modes != 'None':
@@ -258,8 +321,16 @@ class Commands:
             sys.exit(1)
 
     def go(self, args):
+        """
+        bootloader go command
+
+        :param args:  Command argument
+        """
         self.loader.go(args.address)
 
     def perform_commands(self):
+        """
+        execute bootloader command
+        """
         """Run all operations as defined by the configuration."""
         self.config.func(self.config)
