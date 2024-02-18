@@ -14,14 +14,16 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+""" Bootloader command donjon-scaffold interface"""
 import sys
 import operator
 import struct
 import math
-from progressbar import ProgressBar, Percentage, GranularBar, AdaptiveETA
 from time import sleep
 from functools import reduce
+from progressbar import ProgressBar, Percentage, GranularBar, AdaptiveETA
+
+
 
 CHIP_IDS = {
     # see ST AN2606 Table 136 Bootloader device-dependent parameters
@@ -260,6 +262,10 @@ class STM32:
 
     def __init__(self, scaffold, device_family=None, verbosity=5):
         """
+        Command class constructor
+        :param scaffold: A scaffold object
+        :param device_family: A device family string
+        :param verbosity: verbosity level
         """
         self.scaffold = scaffold
         self.scaffold.timeout = 1
@@ -279,6 +285,9 @@ class STM32:
 
     @property
     def extended_erase(self) -> bool:
+        """
+        Get extended_erase flag
+        """
         return self._extended_erase
 
     def debug(self, level, message):
@@ -366,7 +375,7 @@ class STM32:
         if data == self.Reply.NACK:
             raise CommandError("NACK " + info)
         if data != self.Reply.ACK:
-            raise Exception(f"Received 0x{data:02x} byte instead of ACK or NACK.")
+            raise ValueError(f"Received 0x{data:02x} byte instead of ACK or NACK.")
 
     def get(self):
         """
@@ -393,7 +402,7 @@ class STM32:
         data = self.uart.receive(length + 1)
         self._wait_for_ack(f"{self.Command.GET_ID} end")
         _device_id = reduce(lambda x, y: x * 0x100 + y, data)
-        self.debug(0, "Chip id: 0x%X (%s)" % (_device_id, CHIP_IDS.get(_device_id, "Unknown")))
+        self.debug(0, f"Chip id: 0x{_device_id:X} (%s)" % (CHIP_IDS.get(_device_id, "Unknown")))
         return _device_id
 
     def get_uid(self, device_family):
@@ -481,20 +490,20 @@ class STM32:
         """
         data = bytearray()
         chunk_count = int(math.ceil(length / float(self.data_transfer_size)))
-        self.debug(5, "Read %6d bytes in %3d chunks at address 0x%X..." % (length, chunk_count, address))
+        self.debug(5, f"Read {length:d} bytes in {chunk_count:d} chunks at address 0x{address:X}...")
         widgets = [
             ' ', Percentage(),
             ' ', GranularBar(),
             ' ', AdaptiveETA(),
         ]
-        with ProgressBar(widgets=widgets, max_value=chunk_count) as bar:
+        with ProgressBar(widgets=widgets, max_value=chunk_count) as progress:
             while length:
                 read_length = min(length, self.data_transfer_size)
                 self.debug(10, f"Read {read_length:d} bytes at {address:X}")
                 data = data + self.read_memory(address, read_length)
                 length = length - read_length
                 address = address + read_length
-                bar.next()
+                progress.next()
             return data
 
     def write_memory(self, address, data):
@@ -522,7 +531,7 @@ class STM32:
             data = bytearray(data)
             data.extend([0xFF] * padding_bytes)
 
-        self.debug(10, "    %s bytes to write" % [nr_of_bytes])
+        self.debug(10, f"    [{nr_of_bytes}] bytes to write")
         checksum = reduce(operator.xor, data, nr_of_bytes - 1)
         self.write_and_ack("0x31 programming failed", nr_of_bytes - 1, data, checksum)
         self.debug(10, "    Write memory done")
@@ -536,13 +545,13 @@ class STM32:
         length = len(data)
         chunk_count = int(math.ceil(length / float(self.data_transfer_size)))
         offset = 0
-        self.debug(5, "Write %6d bytes in %3d chunks at address 0x%X..." % (length, chunk_count, address))
+        self.debug(5, f"Write {length:d} bytes in {chunk_count}d chunks at address 0x{address:X}...")
         widgets = [
             ' ', Percentage(),
             ' ', GranularBar(),
             ' ', AdaptiveETA(),
         ]
-        with ProgressBar(widgets=widgets, max_value=chunk_count) as bar:
+        with ProgressBar(widgets=widgets, max_value=chunk_count) as progress:
             while length:
                 write_length = min(length, self.data_transfer_size)
                 self.debug(
@@ -554,7 +563,7 @@ class STM32:
                 length -= write_length
                 offset += write_length
                 address += write_length
-                bar.next()
+                progress.next()
 
     def readout_protect(self):
         """Enable readout protection of the flash memory."""

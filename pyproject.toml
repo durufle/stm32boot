@@ -35,6 +35,9 @@ exclude = ['firmwares*', 'tests*', 'venv*']
 [tool.setuptools]
 include-package-data = true
 
+[tool.pylint.format]
+max-line-length = 120
+
 [project.scripts]
 stm32boot = "stm32boot.__main__:main"
 

@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+"""Bootloader commands module"""
 import sys
 import os
 import argparse
@@ -32,7 +32,7 @@ def auto_int(x):
 
 def valid_file(param):
     """valid the given file extension"""
-    base, ext = os.path.splitext(param)
+    _, ext = os.path.splitext(param)
     if ext.lower() not in ('.bin', '.hex'):
         raise argparse.ArgumentTypeError('File must have a bin or hex extension')
     return param
@@ -211,6 +211,9 @@ class Commands:
             self.get_flash_size()
 
     def get(self):
+        """
+        bootloader get
+        """
         return self.loader.get()
 
     def get_id(self):
@@ -330,7 +333,6 @@ class Commands:
 
     def perform_commands(self):
         """
-        execute bootloader command
+        Run all operations as defined by the configuration.
         """
-        """Run all operations as defined by the configuration."""
         self.config.func(self.config)
