@@ -19,7 +19,7 @@ import sys
 import operator
 import struct
 import math
-from progressbar import ProgressBar, Percentage, GranularBar, AdaptiveETA, ETA, AdaptiveTransferSpeed
+from progressbar import ProgressBar, Percentage, GranularBar, AdaptiveETA
 from time import sleep
 from functools import reduce
 
@@ -86,6 +86,7 @@ class PageIndexError(STM32Error, ValueError):
 
 
 class STM32:
+
     """
     Class for instrumenting STM32 devices using Scaffold board and API. The
     following Scaffold IOs are used:
@@ -349,10 +350,10 @@ class STM32:
 
         Raise CommandError if there's no ACK replied.
         """
-        self.debug(10, "*** Command: %s" % description)
+        self.debug(10, f"*** Command: {description}")
         ack_received = self.write_and_ack("Command", command, command ^ 0xFF)
         if not ack_received:
-            raise CommandError("%s (%s) failed: no ack" % (description, command))
+            raise CommandError(f"{description} ({command}) failed: no ack")
 
     def wait_ack(self, info=""):
         """
@@ -628,15 +629,15 @@ class STM32:
         """
         self.command(self.Command.EXTENDED_ERASE, "Extended erase memory")
         if special == 'mass':
-            self.debug(level=10, message=f"Mass erase mode ")
+            self.debug(level=10, message="Mass erase mode ")
             self.write(b"\xff\xff\x00")
 
         if special == 'bank1':
-            self.debug(level=10, message=f"Bank 1 erase mode ")
+            self.debug(level=10, message="Bank 1 erase mode ")
             self.write(b"\xff\xfe\x01")
 
         if special == 'bank2':
-            self.debug(level=10, message=f"Bank 2 erase mode ")
+            self.debug(level=10, message="Bank 2 erase mode ")
             self.write(b"\xff\xfd\x02")
         previous_timeout = self.scaffold.timeout
         self.scaffold.timeout = 30
@@ -644,7 +645,7 @@ class STM32:
             self._wait_for_ack("0x44 erasing failed")
         finally:
             self.scaffold.timeout = previous_timeout
-        self.debug(10, "    Extended Erase memory done")
+        self.debug(10, "Extended Erase memory done")
 
     def erase_memory(self, pages=None):
         """
@@ -679,7 +680,6 @@ class STM32:
 
         :param address: Jump to address.
         """
-        """Send the 'Go' command to start execution of firmware."""
         # pylint: disable=invalid-name
         self.command(self.Command.GO, "Go")
         self.write_and_ack("0x21 go failed", self._encode_address(address))
