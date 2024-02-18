@@ -3,10 +3,10 @@ from .subcommands.donjon import CommandError, DataLengthError, PageIndexError
 from .subcommands.commands import Commands
 
 
-def main(*arguments):
+def main():
     """
     """
-    boot = Commands(arguments)
+    boot = Commands(sys.argv[1:])
     boot.connect()
     boot.get()
     try:
@@ -17,4 +17,4 @@ def main(*arguments):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:])
+    main()
