@@ -21,21 +21,25 @@ class Ceva:
 
     """
 
-    def __init__(self, timeout) -> None:
+    def __init__(self, timeout, trigger=False) -> None:
         self.scaffold = Scaffold()
         self.scaffold.timeout = timeout
         self.nrst = self.scaffold.d2
+
         self.uart = self.scaffold.uart0
         self.boot0 = self.scaffold.d6
         self.boot1 = self.scaffold.d7
         # Connect the UART peripheral to D0 and D1.
-        var = self.uart.rx << self.scaffold.d1
-        var = self.scaffold.d0 << self.uart.tx
+        self.uart.rx << self.scaffold.d1
+        self.scaffold.d0 << self.uart.tx
+        # Output trigger on D5
+        self.scaffold.d5 << self.uart.trigger
         self.uart.baudrate = 115200
         self.uart.flush()
+        self.trigger = trigger
 
     def send(self, data):
-        self.uart.transmit(binascii.unhexlify(data), trigger=False)
+        self.uart.transmit(binascii.unhexlify(data), trigger=self.trigger)
 
     def read(self, number=1):
         return binascii.hexlify(self.uart.receive(number)).decode().upper()
@@ -68,9 +72,10 @@ def main():
     parser.add_argument('-f', '--file', default='ceval_stm32l4xx.yaml', help='specify a yaml configuration file')
     parser.add_argument('-d', '--dev', default='/dev/ttyUSB0', help='scaffold serial device path')
     parser.add_argument('-i', '--iteration', default=1, help='command iteration number')
-    parser.add_argument('-t', '--timeout', type=float, default=1, help='uart reception timeout')
-    parser.add_argument('-s', '--scenario', default='aes', choices=['aes'], help='ceva command')
-    parser.add_argument('-l', '--log', type=bool, default=False, help='Enable or disable logging in file')
+    parser.add_argument('-w', '--waiting', type=float, default=1, help='uart reception timeout')
+    parser.add_argument('-t', '--trigger', action="store_true", default=False, help='uart transmission trigger')
+    parser.add_argument('-c', '--command', default='aes', choices=['aes'], help='ceva command')
+    parser.add_argument('-l', '--log', action="store_true",  default=False, help='Enable or disable logging in file')
     args = parser.parse_args()
 
     # get script path
@@ -104,7 +109,7 @@ def main():
 
     try:
         # Connect to Scaffold board
-        ceva = Ceva(timeout=args.timeout)
+        ceva = Ceva(timeout=args.waiting)
     except Exception as e:
         print(e)
         sys.exit(-1)
@@ -113,8 +118,9 @@ def main():
     ceva.reset()
 
     #  print("-> {0}".format(ceva.command("FE8000000000", "", number=50)))
+    ceva.trigger = args.trigger
 
-    if args.scenario == 'aes':
+    if args.command == 'aes':
         """
         Test target command
         """
