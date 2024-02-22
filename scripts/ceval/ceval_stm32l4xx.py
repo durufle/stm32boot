@@ -29,8 +29,8 @@ class Ceva:
         self.boot0 = self.scaffold.d6
         self.boot1 = self.scaffold.d7
         # Connect the UART peripheral to D0 and D1.
-        self.uart.rx << self.scaffold.d1
-        self.scaffold.d0 << self.uart.tx
+        var = self.uart.rx << self.scaffold.d1
+        var = self.scaffold.d0 << self.uart.tx
         self.uart.baudrate = 115200
         self.uart.flush()
 
@@ -52,14 +52,14 @@ class Ceva:
         """
         # dut power off and reset rst signal
         self.scaffold.power.dut = 0
-        self.boot0 << 0
-        self.boot1 << 0
-        self.nrst << 0
+        var = self.boot0 << 0
+        var = self.boot1 << 0
+        var = self.nrst << 0
         sleep(0.1)
         # dut power on and set rst signal
         self.scaffold.power.dut = 1
         sleep(0.1)
-        self.nrst << 1
+        var = self.nrst << 1
         sleep(wait)
 
 
