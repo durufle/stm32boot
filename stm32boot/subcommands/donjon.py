@@ -23,8 +23,6 @@ from time import sleep
 from functools import reduce
 from progressbar import ProgressBar, Percentage, GranularBar, AdaptiveETA
 
-
-
 CHIP_IDS = {
     # see ST AN2606 Table 136 Bootloader device-dependent parameters
     # 16 to 32 KiB
@@ -88,7 +86,6 @@ class PageIndexError(STM32Error, ValueError):
 
 
 class STM32:
-
     """
     Class for instrumenting STM32 devices using Scaffold board and API. The
     following Scaffold IOs are used:

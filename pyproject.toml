@@ -14,7 +14,9 @@ requires-python = ">=3.8"
 dependencies = [
     "intelhex",
     "donjon-scaffold",
-    "git status"
+    "progressbar2",
+    "pyyaml",
+    "pycryptodome"
 ]
 classifiers = [
     "Programming Language :: Python",
