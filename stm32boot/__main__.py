@@ -14,25 +14,6 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-""" stm3éboot main entry """
-import sys
-from .subcommands.donjon import CommandError, DataLengthError, PageIndexError
-from .subcommands.commands import Commands
-
-
-def main():
-    """
-    stm32boot cli entry
-    """
-    boot = Commands(sys.argv[1:])
-    boot.connect()
-    boot.get()
-    try:
-        boot.perform_commands()
-    except (CommandError, DataLengthError, PageIndexError) as e:
-        print(e)
-        sys.exit(-1)
-
-
-if __name__ == "__main__":
-    main()
+""" STM Bootloader CLI with donjon-scaffold board"""
+from .main import app
+app()

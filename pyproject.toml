@@ -15,8 +15,7 @@ dependencies = [
     "intelhex",
     "donjon-scaffold",
     "progressbar2",
-    "pyyaml",
-    "pycryptodome"
+    "typer[all]"
 ]
 classifiers = [
     "Programming Language :: Python",

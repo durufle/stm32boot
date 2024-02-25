@@ -204,6 +204,7 @@ class STM32:
     }
 
     FLASH_SIZE_NOT_SUPPORTED = 0
+
     FLASH_SIZE_ADDRESS_UNKNOWN = -1
 
     SYNCHRONIZE_ATTEMPTS = 2
@@ -257,13 +258,14 @@ class STM32:
         "H7": 256,
     }
 
-    def __init__(self, scaffold, device_family=None, verbosity=5):
+    def __init__(self, scaffold, family=None, verbosity=5):
         """
         Command class constructor
         :param scaffold: A scaffold object
-        :param device_family: A device family string
+        :param family: A device family string
         :param verbosity: verbosity level
         """
+        self.family = family
         self.scaffold = scaffold
         self.scaffold.timeout = 1
         self.nrst = scaffold.d2
@@ -277,8 +279,8 @@ class STM32:
 
         self.verbosity = verbosity
         self._extended_erase = False
-        self.data_transfer_size = self.DATA_TRANSFER_SIZE.get(device_family or "default")
-        self.flash_page_size = self.FLASH_PAGE_SIZE.get(device_family or "default")
+        self.data_transfer_size = self.DATA_TRANSFER_SIZE.get(family or "default")
+        self.flash_page_size = self.FLASH_PAGE_SIZE.get(family or "default")
 
     @property
     def extended_erase(self) -> bool:
@@ -306,7 +308,7 @@ class STM32:
         self.write(*data)
         return self._wait_for_ack(message)
 
-    def reset_from_system_memory(self):
+    def reset_from_system_memory(self, startup: 2.7):
         """
         Power-cycle and reset target device in bootloader mode (boot on System
         Memory) and initiate serial communication. The byte 0x7f is sent and
@@ -322,7 +324,7 @@ class STM32:
         self.scaffold.power.dut = 1
         sleep(0.1)
         self.nrst << 1
-        sleep(3)
+        sleep(startup)
 
         # Send 0x7f byte for initiating communication
         self.uart.flush()
@@ -385,7 +387,7 @@ class STM32:
         data = self.uart.receive(length)
         if self.Command.EXTENDED_ERASE in data:
             self._extended_erase = True
-        self.debug(10, "Available commands: " + ", ".join(hex(b) for b in data))
+        self.debug(5, "Available commands: " + ", ".join(hex(b) for b in data))
         self._wait_for_ack(f"{self.Command.GET} end")
         return data
 
@@ -399,10 +401,10 @@ class STM32:
         data = self.uart.receive(length + 1)
         self._wait_for_ack(f"{self.Command.GET_ID} end")
         _device_id = reduce(lambda x, y: x * 0x100 + y, data)
-        self.debug(0, f"Chip id: 0x{_device_id:X} (%s)" % (CHIP_IDS.get(_device_id, "Unknown")))
+        self.debug(5, f"Chip id: 0x{_device_id:X} (%s)" % (CHIP_IDS.get(_device_id, "Unknown")))
         return _device_id
 
-    def get_uid(self, device_family):
+    def get_uid(self):
         """
         Send the 'Get UID' command and return the device UID.
 
@@ -411,12 +413,10 @@ class STM32:
         Return UIT_ADDRESS_UNKNOWN if the address of the device's
         UID is not known.
 
-        :param str device_family: Device family name such as "F1".
-          See UID_ADDRESS.
         :return bytearray: UID bytes of the device, or 0 or -1 when
           not available.
         """
-        uid_address = self.UID_ADDRESS.get(device_family, self.UID_ADDRESS_UNKNOWN)
+        uid_address = self.UID_ADDRESS.get(self.family, self.UID_ADDRESS_UNKNOWN)
         if uid_address == self.UID_ADDRESS_UNKNOWN:
             return self.UID_NOT_SUPPORTED
         uid = self.read_memory(uid_address, 12)
@@ -434,15 +434,15 @@ class STM32:
         uid_string = "-".join("".join(format(b, "02X") for b in part) for part in swapped_data)
         return uid_string
 
-    def get_flash_size(self, device_family):
+    def get_flash_size(self):
         """Return the MCU flash size in bytes."""
-        flash_size_address = self.FLASH_SIZE_ADDRESS.get(device_family, self.FLASH_SIZE_ADDRESS_UNKNOWN)
+        flash_size_address = self.FLASH_SIZE_ADDRESS.get(self.family, self.FLASH_SIZE_ADDRESS_UNKNOWN)
         if flash_size_address == self.FLASH_SIZE_ADDRESS_UNKNOWN:
             return self.FLASH_SIZE_NOT_SUPPORTED
-        flash_size_address = self.FLASH_SIZE_ADDRESS[device_family]
+        flash_size_address = self.FLASH_SIZE_ADDRESS[self.family]
         flash_size_bytes = self.read_memory(flash_size_address, 2)
         flash_size = flash_size_bytes[0] + (flash_size_bytes[1] << 8)
-        self.debug(0, f"flash size {flash_size}")
+        self.debug(5, f"flash size {flash_size}")
         return flash_size
 
     def get_version(self):
@@ -454,9 +454,9 @@ class STM32:
         self.command(command=self.Command.GET_VERSION, description="Get version")
         data = self.uart.receive(3)
         self._wait_for_ack(f"{self.Command.GET_VERSION} end")
-        self.debug(0, "Bootloader version: " + hex(data[0]))
-        self.debug(0, "- Option byte 1: " + hex(data[1]))
-        self.debug(0, "- Option byte 2: " + hex(data[2]))
+        self.debug(5, "Bootloader version: " + hex(data[0]))
+        self.debug(5, "- Option byte 1: " + hex(data[1]))
+        self.debug(5, "- Option byte 2: " + hex(data[2]))
         return data[1]
 
     def read_memory(self, address, length):
@@ -487,7 +487,7 @@ class STM32:
         """
         data = bytearray()
         chunk_count = int(math.ceil(length / float(self.data_transfer_size)))
-        self.debug(5, f"Read {length:d} bytes in {chunk_count:d} chunks at address 0x{address:X}...")
+        self.debug(10, f"Read {length:d} bytes in {chunk_count:d} chunks at address 0x{address:X}...")
         widgets = [
             ' ', Percentage(),
             ' ', GranularBar(),
@@ -542,7 +542,7 @@ class STM32:
         length = len(data)
         chunk_count = int(math.ceil(length / float(self.data_transfer_size)))
         offset = 0
-        self.debug(5, f"Write {length:d} bytes in {chunk_count}d chunks at address 0x{address:X}...")
+        self.debug(10, f"Write {length:d} bytes in {chunk_count}d chunks at address 0x{address:X}...")
         widgets = [
             ' ', Percentage(),
             ' ', GranularBar(),
@@ -573,7 +573,7 @@ class STM32:
         perform mass flash erase, which can be very long.
         """
         self.command(self.Command.READOUT_UNPROTECT, "Readout unprotect")
-        self.debug(20, "    Mass erase -- this may take a while")
+        self.debug(10, "    Mass erase -- this may take a while")
         previous_timeout = self.scaffold.timeout
         self.scaffold.timeout = 30
         try:
@@ -581,8 +581,8 @@ class STM32:
         finally:
             # Restore timeout setting, even if something bad happened!
             self.scaffold.timeout = previous_timeout
-        self.debug(20, "    Unprotect / mass erase done")
-        self.debug(20, "    Reset after automatic chip reset due to readout unprotect")
+        self.debug(10, "    Unprotect / mass erase done")
+        self.debug(10, "    Reset after automatic chip reset due to readout unprotect")
         self.reset_from_system_memory()
 
     def write_protect(self, pages):
