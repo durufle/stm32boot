@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """ Bootloader command donjon-scaffold interface"""
+import dataclasses
 import sys
 import operator
 import struct
@@ -103,11 +104,9 @@ class STM32:
     programming the Flash memory and then execute the loaded code.
     """
 
+    @dataclasses.dataclass
     class Command:
         """STM32 native bootloader command values."""
-
-        # pylint: disable=too-few-public-methods
-        # FIXME turn into int enum
 
         # See ST AN3155, AN4872
         GET = 0x00
@@ -127,6 +126,7 @@ class STM32:
         # 'wake the bootloader' == 'activate USART' == 'synchronize'
         SYNCHRONIZE = 0x7F
 
+    @dataclasses.dataclass
     class Reply:
         """STM32 native bootloader reply status codes."""
         # See ST AN3155, AN4872
@@ -294,21 +294,21 @@ class STM32:
         if self.verbosity >= level:
             print(message, file=sys.stderr)
 
-    def write(self, *data):
+    def _write(self, *data):
         """Write the given data to the MCU."""
         for data_bytes in data:
             if isinstance(data_bytes, int):
                 data_bytes = struct.pack("B", data_bytes)
             self.uart.transmit(data_bytes, False)
 
-    def write_and_ack(self, message, *data):
+    def _write_and_ack(self, message, *data):
         """Write data to the MCU and wait until it replies with ACK."""
         # this is a separate method from write() because a keyword
         # argument after *args is not possible in Python 2
-        self.write(*data)
+        self._write(*data)
         return self._wait_for_ack(message)
 
-    def reset_from_system_memory(self, startup: 2.7):
+    def reset_from_system_memory(self, startup=2.7):
         """
         Power-cycle and reset target device in bootloader mode (boot on System
         Memory) and initiate serial communication. The byte 0x7f is sent and
@@ -331,14 +331,14 @@ class STM32:
         for attempt in range(self.SYNCHRONIZE_ATTEMPTS):
             if attempt:
                 print("Bootloader activation timeout -- retrying", file=sys.stderr)
-            self.write(0, self.Command.SYNCHRONIZE)
+            self._write(0, self.Command.SYNCHRONIZE)
             data = bytearray(self.uart.receive(1))
             if data and data[0] in (self.Reply.ACK, self.Reply.NACK):
                 return
         # not successful
         raise CommandError("Bad reply from bootloader")
 
-    def reset_from_flash(self):
+    def reset_from_flash(self, startup=0.1):
         """
         Power-cycle and reset target device and boot from user Flash memory.
         """
@@ -350,7 +350,7 @@ class STM32:
         self.scaffold.power.dut = 1
         sleep(0.1)
         self.nrst << 1
-        sleep(0.1)
+        sleep(startup)
 
     def command(self, command, description):
         """
@@ -359,11 +359,11 @@ class STM32:
         Raise CommandError if there's no ACK replied.
         """
         self.debug(10, f"*** Command: {description}")
-        ack_received = self.write_and_ack("Command", command, command ^ 0xFF)
+        ack_received = self._write_and_ack("Command", command, command ^ 0xFF)
         if not ack_received:
             raise CommandError(f"{description} ({command}) failed: no ack")
 
-    def wait_ack(self, info=""):
+    def _wait_ack(self, info=""):
         """
         Wait for ACK byte.
 
@@ -471,10 +471,10 @@ class STM32:
         if length > self.data_transfer_size:
             raise DataLengthError("Can not read more than 256 bytes at once.")
         self.command(command=self.Command.READ_MEMORY, description="Read memory", )
-        self.write_and_ack("0x11 address failed", self._encode_address(address))
+        self._write_and_ack("0x11 address failed", self._encode_address(address))
         nr_of_bytes = (length - 1) & 0xFF
         checksum = nr_of_bytes ^ 0xFF
-        self.write_and_ack("0x11 length failed", nr_of_bytes, checksum)
+        self._write_and_ack("0x11 length failed", nr_of_bytes, checksum)
         return bytearray(self.uart.receive(length))
 
     def read_memory_data(self, address, length):
@@ -518,7 +518,7 @@ class STM32:
         if nr_of_bytes > self.data_transfer_size:
             raise DataLengthError("Can not write more than 256 bytes at once.")
         self.command(self.Command.WRITE_MEMORY, "Write memory")
-        self.write_and_ack("0x31 address failed", self._encode_address(address))
+        self._write_and_ack("0x31 address failed", self._encode_address(address))
 
         # pad data length to multiple of 4 bytes
         if nr_of_bytes % 4 != 0:
@@ -530,7 +530,7 @@ class STM32:
 
         self.debug(10, f"    [{nr_of_bytes}] bytes to write")
         checksum = reduce(operator.xor, data, nr_of_bytes - 1)
-        self.write_and_ack("0x31 programming failed", nr_of_bytes - 1, data, checksum)
+        self._write_and_ack("0x31 programming failed", nr_of_bytes - 1, data, checksum)
         self.debug(10, "    Write memory done")
 
     def write_memory_data(self, address, data):
@@ -577,7 +577,7 @@ class STM32:
         previous_timeout = self.scaffold.timeout
         self.scaffold.timeout = 30
         try:
-            self.wait_ack()
+            self._wait_ack()
         finally:
             # Restore timeout setting, even if something bad happened!
             self.scaffold.timeout = previous_timeout
@@ -591,7 +591,7 @@ class STM32:
         nr_of_pages = (len(pages) - 1) & 0xFF
         page_numbers = bytearray(pages)
         checksum = reduce(operator.xor, page_numbers, nr_of_pages)
-        self.write_and_ack("0x63 write protect failed", nr_of_pages, page_numbers, checksum)
+        self._write_and_ack("0x63 write protect failed", nr_of_pages, page_numbers, checksum)
         self.debug(10, "    Write protect done")
 
     def write_unprotect(self):
@@ -620,7 +620,7 @@ class STM32:
             checksum = reduce(operator.xor, page_count_bytes)
             checksum = reduce(operator.xor, page_bytes, checksum)
             self.debug(level=10, message=f"Page erase mode ({page_count} pages)")
-            self.write(page_count_bytes, page_bytes, checksum)
+            self._write(page_count_bytes, page_bytes, checksum)
         previous_timeout = self.scaffold.timeout
         self.scaffold.timeout = 30
         try:
@@ -636,15 +636,15 @@ class STM32:
         self.command(self.Command.EXTENDED_ERASE, "Extended erase memory")
         if special == 'mass':
             self.debug(level=10, message="Mass erase mode ")
-            self.write(b"\xff\xff\x00")
+            self._write(b"\xff\xff\x00")
 
         if special == 'bank1':
             self.debug(level=10, message="Bank 1 erase mode ")
-            self.write(b"\xff\xfe\x01")
+            self._write(b"\xff\xfe\x01")
 
         if special == 'bank2':
             self.debug(level=10, message="Bank 2 erase mode ")
-            self.write(b"\xff\xfd\x02")
+            self._write(b"\xff\xfd\x02")
         previous_timeout = self.scaffold.timeout
         self.scaffold.timeout = 30
         try:
@@ -672,10 +672,10 @@ class STM32:
             page_count = (len(pages) - 1) & 0xFF
             page_numbers = bytearray(pages)
             checksum = reduce(operator.xor, page_numbers, page_count)
-            self.write(page_count, page_numbers, checksum)
+            self._write(page_count, page_numbers, checksum)
         else:
             # global erase: n=255 (page count)
-            self.write(255, 0)
+            self._write(255, 0)
 
         self._wait_for_ack("0x43 erase failed")
         self.debug(10, "    Erase memory done")
@@ -688,7 +688,7 @@ class STM32:
         """
         # pylint: disable=invalid-name
         self.command(self.Command.GO, "Go")
-        self.write_and_ack("0x21 go failed", self._encode_address(address))
+        self._write_and_ack("0x21 go failed", self._encode_address(address))
 
     def pages_from_range(self, start, end):
         """Return page indices for the given memory range."""

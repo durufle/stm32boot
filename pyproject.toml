@@ -36,8 +36,13 @@ exclude = ['firmwares*', 'tests*', 'venv*']
 [tool.setuptools]
 include-package-data = true
 
+[tool.pylint.master]
+# ignore sphynx configuration file and utils script
+ignore="conf.py, ceval_stm32l4xx.py"
+
 [tool.pylint.format]
 max-line-length = 120
+disable = "W0104, R0902, R0904"
 
 [project.scripts]
 stm32boot = "stm32boot.__main__:main"
