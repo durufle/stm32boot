@@ -52,7 +52,7 @@ def reset(ctx: typer.Context,
           startup: Annotated[float, typer.Option(help="Minimum startup time")] = 0.1,
           ):
     """
-    Reset to system memory command
+    Reset to system/flash  memory command
     """
     if mode == 'system':
         ctx.obj['loader'].reset_from_system_memory(startup)

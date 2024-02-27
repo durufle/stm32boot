@@ -17,7 +17,7 @@ pip install git+https://github.com/durufle/stm32boot.git
 ## Usage
 
 ```bash
-Usage: stm32boot [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...                                                                                                                                                              
+ Usage: stm32boot [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...                                                                                                                                                              
                                                                                                                                                                                                                                     
  stm32 bootloader shell                                                                                                                                                                                                             
                                                                                                                                                                                                                                     
@@ -35,9 +35,11 @@ Usage: stm32boot [OPTIONS] COMMAND1 [ARGS]... [COMMAND2 [ARGS]...]...
 │ go                                             Go command                                                                                                                                                                        │
 │ protect                                        protection command                                                                                                                                                                │
 │ read                                           Read memory command                                                                                                                                                               │
-│ reset                                          Reset to system memory command                                                                                                                                                    │
+│ reset                                          Reset to system/flash  memory command                                                                                                                                             │
 │ write                                          Write memory command                                                                                                                                                              │
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
 ```
 
 
