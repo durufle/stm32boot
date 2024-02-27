@@ -38,7 +38,7 @@ include-package-data = true
 
 [tool.pylint.master]
 # ignore sphynx configuration file and utils script
-ignore="conf.py, ceval_stm32l4xx.py"
+ignore="conf.py, ceval_stm32l4xx.py, test_cli"
 
 [tool.pylint.format]
 max-line-length = 120
