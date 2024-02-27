@@ -215,7 +215,7 @@ def protect(ctx: typer.Context,
 
 
 @app.callback()
-def main(ctx: typer.Context,
+def entry(ctx: typer.Context,
          port: Annotated[str, typer.Option(help="Scaffold Communication port")] = '/dev/ttyUSB0',
          family: Annotated[str, typer.Option(help="Target family")] = '',
          verbose: Annotated[int, typer.Option(help="Verbosity level")] = 5,
