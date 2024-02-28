@@ -33,7 +33,11 @@ app = typer.Typer(help="stm32 bootloader shell ", chain=True)
 def auto_int_callback(value: str):
     """Convert to int with automatic base detection."""
     # This supports 0x10 == 16 and 10 == 10
-    return int(value, 0)
+    try:
+        return int(value, 0)
+    except ValueError as exc:
+        print(f"Invalid value ({value}) !")
+        raise typer.Exit(code=1) from exc
 
 
 class ResetMode(str, Enum):
