@@ -228,4 +228,5 @@ def main(ctx: typer.Context,
         ctx.obj['reset'] = False
 
     except Exception as exc:
-        raise typer.Exit(code=1) from exc
+        print(exc)
+        # raise typer.Exit(code=1) from exc
