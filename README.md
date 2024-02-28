@@ -1,7 +1,6 @@
 # STM32 Bootloader utility with scaffold v1.1
 
-Python module to upload or download firmware to / from ST Microelectronics STM32 microcontrollers over scaffold.
-Some utility command are also accessible.
+Python module to upload or download firmware to / from ST Microelectronics STM32 microcontrollers over donjon-scaffold.
 
 ## Installation
 
@@ -21,23 +20,23 @@ pip install git+https://github.com/durufle/stm32boot.git
                                                                                                                                                                                                                                     
  stm32 bootloader shell                                                                                                                                                                                                             
                                                                                                                                                                                                                                     
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --port                      TEXT     Scaffold Communication port [default: /dev/ttyUSB0]                                                                                                                                         │
-│ --family                    TEXT     Target family                                                                                                                                                                               │
-│ --verbose                   INTEGER  Verbosity level [default: 5]                                                                                                                                                                │
-│ --install-completion                 Install completion for the current shell.                                                                                                                                                   │
-│ --show-completion                    Show completion for the current shell, to copy it or customize the installation.                                                                                                            │
-│ --help                               Show this message and exit.                                                                                                                                                                 │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ erase                                          Erase memory command                                                                                                                                                              │
-│ get                                            Get information command                                                                                                                                                           │
-│ go                                             Go command                                                                                                                                                                        │
-│ protect                                        protection command                                                                                                                                                                │
-│ read                                           Read memory command                                                                                                                                                               │
-│ reset                                          Reset to system/flash  memory command                                                                                                                                             │
-│ write                                          Write memory command                                                                                                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --port                      TEXT     Scaffold Communication port [default: /dev/ttyUSB0]                             │
+│ --family                    TEXT     Target family                                                                   │
+│ --verbose                   INTEGER  Verbosity level [default: 5]                                                    │
+│ --install-completion                 Install completion for the current shell.                                       │
+│ --show-completion                    Show completion for the current shell, to copy it or customize the installation.│
+│ --help                               Show this message and exit.                                                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ erase                                          Erase memory command                                                  │
+│ get                                            Get information command                                               │
+│ go                                             Go command                                                            │
+│ protect                                        protection command                                                    │
+│ read                                           Read memory command                                                   │
+│ reset                                          Reset to system/flash  memory command                                 │
+│ write                                          Write memory command                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
 
 ```
