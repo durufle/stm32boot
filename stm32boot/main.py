@@ -24,7 +24,7 @@ import typer
 from typing_extensions import Annotated
 from scaffold import Scaffold
 from intelhex import IntelHex
-
+from serial.serialutil import SerialException
 from .bootloader import STM32, CommandError
 
 app = typer.Typer(help="stm32 bootloader shell ", chain=True)
@@ -231,6 +231,6 @@ def main(ctx: typer.Context,
         ctx.obj['loader'] = loader
         ctx.obj['reset'] = False
 
-    except Exception as exc:
-        print(exc)
-        # raise typer.Exit(code=1) from exc
+    except SerialException as exc:
+        pass
+

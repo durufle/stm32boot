@@ -31,7 +31,7 @@ classifiers = [
 dynamic = ["version"]
 
 [tool.setuptools.packages.find]
-exclude = ['firmwares*', 'tests*', 'venv*']
+exclude = ['firmwares*', 'tests*', 'venv*', 'docs*', 'daughter-board*', 'scripts*']
 
 [tool.setuptools]
 include-package-data = true
