@@ -20,8 +20,6 @@ test cli parameters
 """
 
 from typer.testing import CliRunner
-from unittest.mock import MagicMock
-
 from stm32boot.main import app
 
 runner = CliRunner()
