@@ -231,6 +231,5 @@ def main(ctx: typer.Context,
         ctx.obj['loader'] = loader
         ctx.obj['reset'] = False
 
-    except SerialException as exc:
+    except SerialException:
         pass
-
