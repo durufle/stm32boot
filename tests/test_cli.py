@@ -37,7 +37,7 @@ def test_main_no_args():
     """
     result = runner.invoke(app, [])
     assert result.exit_code != 0
-    assert "stm32 bootloader shell" in result.stdout
+    assert "Missing command. " in result.stdout
 
 
 def test_main_bad_command():
