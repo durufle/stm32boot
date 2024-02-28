@@ -1,9 +1,14 @@
 from typer.testing import CliRunner
+from unittest.mock import MagicMock
 
 from stm32boot.main import app
 
 runner = CliRunner(mix_stderr=True)
 
+
+# ----------------------------------------------------------------------------------------------------------------------
+# main command parameter test parameters
+# ----------------------------------------------------------------------------------------------------------------------
 
 def test_main_no_args():
     result = runner.invoke(app, [])
@@ -49,9 +54,13 @@ def test_main_help_option():
     assert "write" in result.stdout
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# erase command parameter test parameters
+# ----------------------------------------------------------------------------------------------------------------------
+
 def test_command_erase_no_args():
     result = runner.invoke(app, ["erase"])
-    assert result.exit_code == 0
+    assert result.exit_code != 0
     assert "" in result.stdout
 
 
@@ -85,6 +94,9 @@ def test_command_erase_help_option():
     assert "help" in result.stdout
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# read command parameter test parameters
+# ----------------------------------------------------------------------------------------------------------------------
 def test_command_read_bad_option():
     result = runner.invoke(app, ["read", "--bad"])
     assert result.exit_code != 0
@@ -113,4 +125,31 @@ def test_command_read_help_option():
     # Options
     assert "--address" in result.stdout
     assert "--length" in result.stdout
+    assert "--help" in result.stdout
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# get command parameter test parameters
+# ----------------------------------------------------------------------------------------------------------------------
+
+def test_command_get_bad_option():
+    result = runner.invoke(app, ["get", "--bad"])
+    assert result.exit_code != 0
+    assert " No such option: --bad " in result.stdout
+
+
+def test_command_read_bad_info_type_option():
+    result = runner.invoke(app, ["get", "--info", "a"])
+    assert result.exit_code != 0
+    assert "Invalid value for '--info': 'a'" in result.stdout
+
+
+def test_command_get_help_option():
+
+    result = runner.invoke(app, ["get", "--help"])
+    assert result.exit_code == 0
+    # header
+    assert " Get information command  " in result.stdout
+    # Options
+    assert "--info" in result.stdout
     assert "--help" in result.stdout
