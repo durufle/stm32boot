@@ -33,11 +33,7 @@ app = typer.Typer(help="stm32 bootloader shell ", chain=True)
 def auto_int_callback(value: str):
     """Convert to int with automatic base detection."""
     # This supports 0x10 == 16 and 10 == 10
-    try:
-        return int(value, 0)
-    except ValueError as exc:
-        print(f"Invalid value ({value}) !")
-        raise typer.Exit(code=1) from exc
+    return int(value, 0)
 
 
 class ResetMode(str, Enum):
@@ -211,11 +207,11 @@ def protect(ctx: typer.Context,
     elif mode == "Read" and state == 'enable':
         ctx.obj['loader'].readout_protect()
     else:
-        ctx.obj['loader'].debug(0, f"Operation protec {mode} {state} not yet supported")
+        ctx.obj['loader'].debug(0, f"Operation protect {mode} {state} not yet supported")
 
 
 @app.callback()
-def entry(ctx: typer.Context,
+def main(ctx: typer.Context,
          port: Annotated[str, typer.Option(help="Scaffold Communication port")] = '/dev/ttyUSB0',
          family: Annotated[str, typer.Option(help="Target family")] = '',
          verbose: Annotated[int, typer.Option(help="Verbosity level")] = 5,
