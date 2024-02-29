@@ -20,6 +20,8 @@ STM32 Bootloader over donjon-scaffold CLI
 from typing import Optional
 from enum import Enum
 from pathlib import Path
+
+import scaffold
 import typer
 from typing_extensions import Annotated
 from scaffold import Scaffold
@@ -57,12 +59,15 @@ def reset(ctx: typer.Context,
     """
     if ctx.obj is None:
         raise typer.Exit()
-    if mode == 'system':
-        ctx.obj['loader'].reset_from_system_memory(startup)
-        ctx.obj['reset'] = True
-    else:
-        ctx.obj['loader'].reset_from_flash_memory(startup)
-        ctx.obj['reset'] = False
+    try:
+        if mode == 'system':
+            ctx.obj['loader'].reset_from_system_memory(startup)
+            ctx.obj['reset'] = True
+        else:
+            ctx.obj['loader'].reset_from_flash_memory(startup)
+            ctx.obj['reset'] = False
+    except scaffold.TimeoutError as msg:
+        print(f"{msg} Consider to change reset startup time with option --startup/-s")
 
 
 @app.command()
@@ -223,7 +228,7 @@ def protect(ctx: typer.Context,
     elif mode == "Read" and state == 'enable':
         ctx.obj['loader'].readout_protect()
     else:
-        ctx.obj['loader'].debug(0, f"Operation protect {mode} {state} not yet supported")
+        ctx.obj['loader'].debug(0, f"Operation protect {mode} {state} not yet supported !")
 
 
 @app.callback()
