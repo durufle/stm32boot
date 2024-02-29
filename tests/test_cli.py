@@ -35,7 +35,7 @@ def test_main_no_args():
     """
     result = runner.invoke(app, [])
     assert result.exit_code != 0
-    assert "Missing command. " in result.stdout
+    assert "Error: Missing command." in result.stdout
 
 
 def test_main_bad_command():
@@ -47,13 +47,25 @@ def test_main_bad_command():
 def test_main_verbose_option_no_args():
     result = runner.invoke(app, ["--verbose"])
     assert result.exit_code != 0
-    assert "Option '--verbose' requires an argument." in result.stdout
+    assert "Error: Option '--verbose' requires an argument." in result.stdout
+
+
+def test_main_verbose_option_short_no_args():
+    result = runner.invoke(app, ["-v"])
+    assert result.exit_code != 0
+    assert "Error: Option '-v' requires an argument." in result.stdout
+
+
+def test_main_verbose_option_short_args_bad_type():
+    result = runner.invoke(app, ["-v", 'a'])
+    assert result.exit_code != 0
+    assert "Error: Invalid value for '--verbose' / '-v': 'a' is not a valid integer." in result.stdout
 
 
 def test_main_verbose_option_args_bad_type():
     result = runner.invoke(app, ["--verbose", 'a'])
     assert result.exit_code != 0
-    assert "Invalid value" in result.stdout
+    assert "Error: Invalid value for '--verbose'" in result.stdout
 
 
 def test_main_verbose_option_args_no_command():
@@ -82,7 +94,7 @@ def test_main_help_option():
 
 def test_command_erase_no_args():
     result = runner.invoke(app, ["erase"])
-    assert result.exit_code != 0
+    assert result.exit_code == 0
     assert "" in result.stdout
 
 
@@ -98,17 +110,29 @@ def test_command_erase_bad_address_type():
     assert "Invalid value (a) !" in result.stdout
 
 
+def test_command_erase_bad_address_short_type():
+    result = runner.invoke(app, ["erase", "-a", "a"])
+    assert result.exit_code != 0
+    assert "Invalid value (a) !" in result.stdout
+
+
 def test_command_erase_bad_length_type():
     result = runner.invoke(app, ["erase", "--length", "a"])
     assert result.exit_code != 0
-    assert "Invalid value for '--length': 'a'" in result.stdout
+    assert "Error: Invalid value for '--length'" in result.stdout
+
+
+def test_command_erase_bad_length_short_type():
+    result = runner.invoke(app, ["erase", "-l", "a"])
+    assert result.exit_code != 0
+    assert "Error: Invalid value for '--length'" in result.stdout
 
 
 def test_command_erase_help_option():
     result = runner.invoke(app, ["erase", "--help"])
     assert result.exit_code == 0
     # header
-    assert " Erase memory command " in result.stdout
+    assert "  Erase memory command" in result.stdout
     # Options
     assert "--mode" in result.stdout
     assert "--address" in result.stdout
@@ -122,7 +146,7 @@ def test_command_erase_help_option():
 def test_command_read_bad_option():
     result = runner.invoke(app, ["read", "--bad"])
     assert result.exit_code != 0
-    assert " No such option: --bad " in result.stdout
+    assert "Error: No such option: --bad" in result.stdout
 
 
 def test_command_read_bad_address_type_option():
@@ -134,14 +158,20 @@ def test_command_read_bad_address_type_option():
 def test_command_read_bad_length_type_option():
     result = runner.invoke(app, ["read", "--length", "a"])
     assert result.exit_code != 0
-    assert "Invalid value for '--length': 'a'" in result.stdout
+    assert "Error: Invalid value for '--length' / '-l': 'a'" in result.stdout
+
+
+def test_command_read_bad_length_short_type_option():
+    result = runner.invoke(app, ["read", "-l", "a"])
+    assert result.exit_code != 0
+    assert "Error: Invalid value for '--length' / '-l': 'a'" in result.stdout
 
 
 def test_command_read_help_option():
     result = runner.invoke(app, ["read", "--help"])
     assert result.exit_code == 0
     # header
-    assert " Read memory command " in result.stdout
+    assert "  Read memory command" in result.stdout
     # Arguments
     assert "file" in result.stdout
     # Options
@@ -157,21 +187,26 @@ def test_command_read_help_option():
 def test_command_get_bad_option():
     result = runner.invoke(app, ["get", "--bad"])
     assert result.exit_code != 0
-    assert " No such option: --bad " in result.stdout
+    assert "Error: No such option: --bad" in result.stdout
 
 
 def test_command_read_bad_info_type_option():
     result = runner.invoke(app, ["get", "--info", "a"])
     assert result.exit_code != 0
-    assert "Invalid value for '--info': 'a'" in result.stdout
+    assert "Error: Invalid value for '--info' / '-i': 'a'" in result.stdout
+
+
+def test_command_read_bad_info_short_type_option():
+    result = runner.invoke(app, ["get", "-i", "a"])
+    assert result.exit_code != 0
+    assert "Error: Invalid value for '--info' / '-i': 'a'" in result.stdout
 
 
 def test_command_get_help_option():
-
     result = runner.invoke(app, ["get", "--help"])
     assert result.exit_code == 0
     # header
-    assert " Get information command  " in result.stdout
+    assert "  Get information command" in result.stdout
     # Options
     assert "--info" in result.stdout
     assert "--help" in result.stdout

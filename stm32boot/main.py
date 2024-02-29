@@ -27,7 +27,7 @@ from intelhex import IntelHex
 from serial.serialutil import SerialException
 from .bootloader import STM32, CommandError
 
-app = typer.Typer(help="stm32 bootloader shell ", chain=True)
+app = typer.Typer(help="stm32 bootloader shell ", chain=True, )
 
 
 def auto_int_callback(value: str):
@@ -48,29 +48,34 @@ class ResetMode(str, Enum):
 
 @app.command()
 def reset(ctx: typer.Context,
-          mode: Annotated[ResetMode, typer.Option(case_sensitive=False, help="Reset mode")] = ResetMode.SYSTEM,
-          startup: Annotated[float, typer.Option(help="Minimum startup time")] = 0.1,
+          mode: Annotated[
+              ResetMode, typer.Option("--mode", "-m", case_sensitive=False, help="Reset mode")] = ResetMode.SYSTEM,
+          startup: Annotated[float, typer.Option("--startup", "-s", help="Minimum startup time")] = 0.1,
           ):
     """
     Reset to system/flash  memory command
     """
+    if ctx.obj is None:
+        raise typer.Exit()
     if mode == 'system':
         ctx.obj['loader'].reset_from_system_memory(startup)
         ctx.obj['reset'] = True
     else:
         ctx.obj['loader'].reset_from_flash_memory(startup)
+        ctx.obj['reset'] = False
 
 
 @app.command()
 def read(ctx: typer.Context,
-         address: Annotated[str, typer.Option(callback=auto_int_callback, help="Starting address")] = '0x08000000',
-         length: Annotated[int, typer.Option(help="Length to read")] = 0,
+         address: Annotated[
+             str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
+         length: Annotated[int, typer.Option("--length", "-l", help="Length to read")] = 0,
          file: Annotated[Optional[str], typer.Argument(help="Output Intel hex file name")] = None,
          ):
     """
     Read memory command
     """
-    if ctx.obj['reset'] is not True:
+    if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     data = ctx.obj['loader'].read_memory_data(address, length)
     ih = IntelHex()
@@ -82,13 +87,14 @@ def read(ctx: typer.Context,
 
 @app.command()
 def write(ctx: typer.Context,
-          address: Annotated[str, typer.Option(callback=auto_int_callback, help="Starting address")] = '0x08000000',
+          address: Annotated[
+              str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
           file: Annotated[Optional[str], typer.Argument(help="File to write")] = None,
-          verify: Annotated[bool, typer.Option(help="Write verify")] = False):
+          verify: Annotated[bool, typer.Option("--verify", "-v", help="Write verify")] = False):
     """
     Write memory command
     """
-    if ctx.obj['reset'] is not True:
+    if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     ih = IntelHex()
     if Path(file).suffix in ['.BIN', '.bin']:
@@ -117,14 +123,16 @@ class EraseMode(str, Enum):
 
 @app.command()
 def erase(ctx: typer.Context,
-          address: Annotated[str, typer.Option(callback=auto_int_callback, help="Starting address")] = '0x08000000',
-          length: Annotated[int, typer.Option(help="Length to erase")] = 0,
-          mode: Annotated[EraseMode, typer.Option(help='Erase extended mode', case_sensitive=False)] = EraseMode.NONE,
+          address: Annotated[
+              str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
+          length: Annotated[int, typer.Option("--length", "-l", help="Length to erase")] = 0,
+          mode: Annotated[EraseMode, typer.Option("--mode", "-m", help='Erase extended mode',
+                                                  case_sensitive=False)] = EraseMode.NONE,
           ):
     """
     Erase memory command
     """
-    if ctx.obj['reset'] is not True:
+    if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     try:
         if ctx.obj.loader.extended_erase and mode != EraseMode.NONE:
@@ -153,11 +161,12 @@ class GetInfo(str, Enum):
 
 @app.command()
 def get(ctx: typer.Context,
-        info: Annotated[GetInfo, typer.Option(case_sensitive=False, help="Get information")] = GetInfo.VERSION):
+        info: Annotated[
+            GetInfo, typer.Option("--info", "-i", case_sensitive=False, help="Get information")] = GetInfo.VERSION):
     """
     Get information command
     """
-    if ctx.obj['reset'] is not True:
+    if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     if info == GetInfo.VERSION:
         ctx.obj['loader'].get_version()
@@ -169,12 +178,13 @@ def get(ctx: typer.Context,
 
 @app.command()
 def go(ctx: typer.Context,
-       address: Annotated[str, typer.Option(callback=auto_int_callback, help="Starting address")] = '0x08000000',
+       address: Annotated[
+           str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
        ):
     """
     Go command
     """
-    if ctx.obj['reset'] is not True:
+    if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     ctx.obj['loader'].go(address)
 
@@ -197,14 +207,16 @@ class ProtecState(str, Enum):
 
 @app.command()
 def protect(ctx: typer.Context,
-            mode: Annotated[ProtecMode, typer.Option(case_sensitive=False, help="Protection mode")] = ProtecMode.READ,
+            mode: Annotated[ProtecMode, typer.Option("--mode", "-m", case_sensitive=False,
+                                                     help="Protection mode")] = ProtecMode.READ,
             state: Annotated[
-                ProtecState, typer.Option(case_sensitive=False, help="Protection state")] = ProtecState.DISABLE,
+                ProtecState, typer.Option("--state", "-s", case_sensitive=False,
+                                          help="Protection state")] = ProtecState.DISABLE,
             ):
     """
     protection command
     """
-    if ctx.obj['reset'] is not True:
+    if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     if mode == "Read" and state == 'disable':
         ctx.obj['loader'].readout_unprotect()
@@ -216,9 +228,9 @@ def protect(ctx: typer.Context,
 
 @app.callback()
 def main(ctx: typer.Context,
-         port: Annotated[str, typer.Option(help="Scaffold Communication port")] = '/dev/ttyUSB0',
-         family: Annotated[str, typer.Option(help="Target family")] = '',
-         verbose: Annotated[int, typer.Option(help="Verbosity level")] = 5,
+         port: Annotated[str, typer.Option("--port", "-p", help="Scaffold Communication port")] = '/dev/ttyUSB0',
+         family: Annotated[str, typer.Option("--family", "-f", help="Target family")] = '',
+         verbose: Annotated[int, typer.Option("--verbose", "-v", help="Verbosity level")] = 5,
          ):
     """
     Command callback
