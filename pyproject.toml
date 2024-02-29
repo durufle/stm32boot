@@ -3,6 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
+version= "0.0.0"
 name = "stm32boot"
 authors = [
     {name = "Laurent Bonnet", email = "laurent.woolcap@free.fr"}
@@ -29,7 +30,14 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
 ]
-dynamic = ["version"]
+
+[project.scripts]
+stm32boot = "stm32boot.__main__:main"
+
+[project.urls]
+Home = "https://github.com/durufle/stm32boot"
+BugTracker = "https://github.com/durufle/stm32boot/issues"
+SourceCode = "https://github.com/durufle/stm32boot"
 
 [tool.setuptools.packages.find]
 exclude = ['firmwares*', 'tests*', 'venv*', 'docs*', 'daughter-board*', 'scripts*']
@@ -45,11 +53,5 @@ ignore="conf.py, ceval_stm32l4xx.py, test_cli.py"
 max-line-length = 120
 disable = "W0104, R0902, R0904"
 
-[project.scripts]
-stm32boot = "stm32boot.__main__:main"
 
-[project.urls]
-Home = "https://github.com/durufle/stm32boot"
-BugTracker = "https://github.com/durufle/stm32boot/issues"
-SourceCode = "https://github.com/durufle/stm32boot"
 
