@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 version= "0.0.0"
-name = "stm32boot"
+name = "ragnarok-stmloader"
 authors = [
     {name = "Laurent Bonnet", email = "laurent.woolcap@free.fr"}
 ]
@@ -16,7 +16,7 @@ dependencies = [
     "intelhex",
     "donjon-scaffold",
     "progressbar2",
-    "typer[all]"
+    "typer"
 ]
 classifiers = [
     "Programming Language :: Python",
@@ -32,7 +32,7 @@ classifiers = [
 ]
 
 [project.scripts]
-stm32boot = "stm32boot.__main__:main"
+stmloader = "stm32boot.__main__:main"
 
 [project.urls]
 Home = "https://github.com/durufle/stm32boot"

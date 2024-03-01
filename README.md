@@ -5,7 +5,7 @@ Python module to upload or download firmware to / from ST Microelectronics STM32
 ## Installation
 
 ```bash
-pip install stm32boot
+pip install ragnarok_stmloader
 ```
 To install the latest development version
 
@@ -16,7 +16,7 @@ pip install git+https://github.com/durufle/stm32boot.git
 ## Usage
 
 ```bash
- Usage: python -m stm32boot [OPTIONS] COMMAND1 [ARGS]... [COMMAND2
+ Usage: python -m stmloader [OPTIONS] COMMAND1 [ARGS]... [COMMAND2
                            [ARGS]...]...
 
   stm32 bootloader shell
