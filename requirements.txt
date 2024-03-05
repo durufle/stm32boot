@@ -2,3 +2,5 @@ typer
 donjon-scaffold
 progressbar2
 intelhex
+pyyaml
+cerberus

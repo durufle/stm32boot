@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-STM32 Bootloader over donjon-scaffold CLI
+Bootloader over donjon-scaffold cli application
 """
 from typing import Optional
 from enum import Enum
@@ -29,7 +29,7 @@ from intelhex import IntelHex
 from serial.serialutil import SerialException
 from .bootloader import STM32, CommandError
 
-app = typer.Typer(help="stm32 bootloader shell ", chain=True, )
+boot_app = typer.Typer(help="stm32 bootloader cli ", chain=True, )
 
 
 def auto_int_callback(value: str):
@@ -48,11 +48,11 @@ class ResetMode(str, Enum):
     FLASH = "flash"
 
 
-@app.command()
+@boot_app.command()
 def reset(ctx: typer.Context,
           mode: Annotated[
               ResetMode, typer.Option("--mode", "-m", case_sensitive=False, help="Reset mode")] = ResetMode.SYSTEM,
-          startup: Annotated[float, typer.Option("--startup", "-s", help="Minimum startup time")] = 0.1,
+          timeout: Annotated[float, typer.Option("--timeout", "-t", help="Minimum timeout")] = 0.1,
           ):
     """
     Reset to system/flash  memory command
@@ -61,16 +61,16 @@ def reset(ctx: typer.Context,
         raise typer.Exit()
     try:
         if mode == 'system':
-            ctx.obj['loader'].reset_from_system_memory(startup)
+            ctx.obj['loader'].reset_from_system_memory(timeout)
             ctx.obj['reset'] = True
         else:
-            ctx.obj['loader'].reset_from_flash_memory(startup)
+            ctx.obj['loader'].reset_from_flash_memory(timeout)
             ctx.obj['reset'] = False
     except scaffold.TimeoutError as msg:
-        print(f"{msg} Consider to change reset startup time with option --startup/-s")
+        print(f"{msg} Consider to change reset startup time with option --timeout/-t")
 
 
-@app.command()
+@boot_app.command()
 def read(ctx: typer.Context,
          address: Annotated[
              str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
@@ -90,7 +90,7 @@ def read(ctx: typer.Context,
         ih.write_hex_file(file)
 
 
-@app.command()
+@boot_app.command()
 def write(ctx: typer.Context,
           address: Annotated[
               str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
@@ -126,7 +126,7 @@ class EraseMode(str, Enum):
     BANK2 = "bank2"
 
 
-@app.command()
+@boot_app.command()
 def erase(ctx: typer.Context,
           address: Annotated[
               str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
@@ -159,12 +159,12 @@ class GetInfo(str, Enum):
     Get command enumerate
     """
     VERSION = "version"
-    IDENTIFIER = "identifier"
     COMMAND = 'command'
-    FLASH = "flash"
+    UID = 'uid'
+    FLASH_SIZE = "flash_size"
 
 
-@app.command()
+@boot_app.command()
 def get(ctx: typer.Context,
         info: Annotated[
             GetInfo, typer.Option("--info", "-i", case_sensitive=False, help="Get information")] = GetInfo.VERSION):
@@ -173,15 +173,20 @@ def get(ctx: typer.Context,
     """
     if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
-    if info == GetInfo.VERSION:
-        ctx.obj['loader'].get_version()
-    if info == GetInfo.IDENTIFIER:
-        ctx.obj['loader'].get_id()
-    if info == GetInfo.COMMAND:
-        ctx.obj['loader'].get()
+    try:
+        if info == GetInfo.VERSION:
+            ctx.obj['loader'].get_version()
+        if info == GetInfo.UID:
+            ctx.obj['loader'].get_uid()
+        if info == GetInfo.COMMAND:
+            ctx.obj['loader'].get()
+        if info == GetInfo.FLASH_SIZE:
+            ctx.obj['loader'].get_flash_size()
+    except CommandError as e:
+        print(e)
 
 
-@app.command()
+@boot_app.command()
 def go(ctx: typer.Context,
        address: Annotated[
            str, typer.Option("--address", "-a", callback=auto_int_callback, help="Starting address")] = '0x08000000',
@@ -210,7 +215,7 @@ class ProtecState(str, Enum):
     DISABLE = 'disable'
 
 
-@app.command()
+@boot_app.command()
 def protect(ctx: typer.Context,
             mode: Annotated[ProtecMode, typer.Option("--mode", "-m", case_sensitive=False,
                                                      help="Protection mode")] = ProtecMode.READ,
@@ -231,17 +236,16 @@ def protect(ctx: typer.Context,
         ctx.obj['loader'].debug(0, f"Operation protect {mode} {state} not yet supported !")
 
 
-@app.callback()
+@boot_app.callback()
 def main(ctx: typer.Context,
          port: Annotated[str, typer.Option("--port", "-p", help="Scaffold Communication port")] = '/dev/ttyUSB0',
-         family: Annotated[str, typer.Option("--family", "-f", help="Target family")] = '',
          verbose: Annotated[int, typer.Option("--verbose", "-v", help="Verbosity level")] = 5,
          ):
     """
     Command callback
     """
     try:
-        loader = STM32(Scaffold(port), family=family, verbosity=verbose)
+        loader = STM32(Scaffold(port), verbosity=verbose)
         # save object into the context
         if ctx.obj is None:
             ctx.obj = {}

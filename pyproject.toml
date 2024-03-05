@@ -16,8 +16,11 @@ dependencies = [
     "intelhex",
     "donjon-scaffold",
     "progressbar2",
-    "typer"
+    "typer",
+    "cerberus",
+    "pyyaml"
 ]
+
 classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
@@ -32,7 +35,7 @@ classifiers = [
 ]
 
 [project.scripts]
-stmloader = "stm32boot.__main__:main"
+stmloader = "stm32boot.__main__:cli"
 
 [project.urls]
 Home = "https://github.com/durufle/stm32boot"
@@ -46,12 +49,11 @@ exclude = ['firmwares*', 'tests*', 'venv*', 'docs*', 'daughter-board*', 'scripts
 include-package-data = true
 
 [tool.pylint.master]
-# ignore sphynx configuration file and utils script
-ignore="conf.py, ceval_stm32l4xx.py, test_cli.py"
+ignore="conf.py, ceval_stm32l4xx.py, test_loader_cli_args.py"
 
 [tool.pylint.format]
 max-line-length = 120
-disable = "W0104, R0902, R0904"
+disable = "W0104, R0902, R0904, W0612"
 
 
 

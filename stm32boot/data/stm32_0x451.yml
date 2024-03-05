@@ -1,0 +1,12 @@
+DeviceID: 0x451
+Name: 'STM32F76x/STM32F77x'
+Series: 'STM32F7'
+CPU: 'Cortex-M7'
+Description: 'ARM 32-bit Cortex-M7 based device'
+FlashSize:
+  address: 0x1FF0F442
+UniversalID:
+  address: 0x1FF0F420
+Peripherals:
+  Flash:
+    PageSize: 1024

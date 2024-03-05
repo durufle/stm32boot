@@ -14,6 +14,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-""" STM Bootloader CLI with donjon-scaffold board"""
-from .cli import cli
-cli()
+"""
+Global CLI
+"""
+import typer
+
+from .boot import boot_app
+from .devices import device_app
+
+cli = typer.Typer()
+cli.add_typer(device_app, name="devices")
+cli.add_typer(boot_app, name="loader")

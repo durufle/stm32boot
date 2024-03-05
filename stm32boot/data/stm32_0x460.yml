@@ -1,0 +1,12 @@
+DeviceID: 0x460
+Name: 'STM32G07x/STM32G08x'
+Series: 'STM32G0'
+CPU: 'Cortex-M0+'
+Description: 'ARM 32-bit Cortex-M0+ based device'
+FlashSize:
+  address: 0x1FFF75E0
+UniversalID:
+  address: 0x1FFF75E0
+Peripherals:
+  Flash:
+    PageSize: 1024

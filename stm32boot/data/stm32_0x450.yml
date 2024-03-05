@@ -1,0 +1,12 @@
+DeviceID: 0x450
+Name: 'STM32H7xx'
+Series: 'STM32H7'
+CPU: 'Cortex-M7'
+Description: 'ARM 32-bit Cortex-M7 and ARM 32-bit Cortex-M4 dual core based device'
+FlashSize:
+  address: 0x1FF1E880
+UniversalID:
+  address: 0x1FF1E800
+Peripherals:
+  Flash:
+    PageSize: 0x20000
