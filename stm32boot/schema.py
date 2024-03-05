@@ -1,4 +1,12 @@
-# Device description schema
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2024 Laurent Bonnet
+#
+# License: MIT
+
+"""
+Device description schema
+"""
 template = {
     'DeviceID': {'type': 'integer', 'required': True},
     'Name': {'type': 'string', 'required': True},
