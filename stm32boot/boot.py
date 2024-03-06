@@ -148,7 +148,8 @@ class GetInfo(str, Enum):
     """
     Get command enumerate
     """
-    VERSION = "version"
+    PROTOCOL_VERSION = "protocol"
+    BOOTLOADER_VERSION = "version"
     COMMAND = 'command'
     UID = 'uid'
     FLASH_SIZE = "flash_size"
@@ -156,16 +157,18 @@ class GetInfo(str, Enum):
 
 @boot_app.command()
 def get(ctx: typer.Context,
-        info: Annotated[
-            GetInfo, typer.Option("--info", "-i", case_sensitive=False, help="Get information")] = GetInfo.VERSION):
+        info: Annotated[GetInfo, typer.Option("--info", "-i", case_sensitive=False,
+                                              help="Get information")] = GetInfo.PROTOCOL_VERSION):
     """
     Get information command
     """
     if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     try:
-        if info == GetInfo.VERSION:
-            ctx.obj['loader'].get_version()
+        if info == GetInfo.BOOTLOADER_VERSION:
+            ctx.obj['loader'].get_bootloader_id()
+        if info == GetInfo.PROTOCOL_VERSION:
+            ctx.obj['loader'].get_protocol_version()
         if info == GetInfo.UID:
             ctx.obj['loader'].get_uid()
         if info == GetInfo.COMMAND:

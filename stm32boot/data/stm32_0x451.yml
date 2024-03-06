@@ -7,6 +7,13 @@ FlashSize:
   address: 0x1FF0F442
 UniversalID:
   address: 0x1FF0F420
-Peripherals:
-  Flash:
-    PageSize: 1024
+Flash:
+  PageSize: 1024
+Bootloader:
+  ID: 0x1FF0EDBE
+  RAM:
+    min: 0x20004000
+    max: 0x2007FFFF
+  SYS:
+    min: 0x1FF00000
+    max: 0x1FF0EDBF

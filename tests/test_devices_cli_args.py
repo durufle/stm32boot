@@ -90,11 +90,39 @@ def test_command_add_option_check_name_null():
     assert "{'Name': ['null value not allowed']}" in result.stdout
 
 
-def test_command_erase_help_option():
+def test_command_add_help_option():
     result = runner.invoke(device_app, ["add", "--help"])
     assert result.exit_code == 0
-    # header
     assert "  Add device description" in result.stdout
     assert "  FILES...  Device description file(s).  [required]" in result.stdout
     assert "-m, --mode" in result.stdout
     assert "--help" in result.stdout
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# list command parameter test parameters
+# ----------------------------------------------------------------------------------------------------------------------
+def test_command_list_help_option():
+    result = runner.invoke(device_app, ["list", "--help"])
+    assert result.exit_code == 0
+    assert "  List supported devices" in result.stdout
+    assert "--help" in result.stdout
+
+
+def test_command_list_bad_option():
+    result = runner.invoke(device_app, ["list", "--bad"])
+    assert result.exit_code != 0
+    assert "Error: No such option: --bad" in result.stdout
+
+
+def test_command_list_no_extra_args():
+    result = runner.invoke(device_app, ["list", "bad"])
+    assert result.exit_code != 0
+    assert "Error: Got unexpected extra argument (bad)" in result.stdout
+
+
+def test_command_list_basic_option():
+    result = runner.invoke(device_app, ["list"])
+    assert result.exit_code == 0
+    assert "0x415" in result.stdout
+    assert "0x460" in result.stdout

@@ -92,6 +92,7 @@ class STM32:
     FLASH_SIZE_ADDRESS_UNKNOWN = -1
     # default flash page size
     FLASH_PAGE_SIZE_DEFAULT = 1024
+    BOOT_VERSION_ADDRESS_UNKNOWN = -1
     DATA_TRANSFER_SIZE_DEFAULT = 256
     SYNCHRONIZE_ATTEMPTS = 2
 
@@ -118,6 +119,7 @@ class STM32:
         self.flash_page_size = self.FLASH_PAGE_SIZE_DEFAULT
         self.uid_address = self.UID_ADDRESS_UNKNOWN
         self.flash_size_address = self.FLASH_SIZE_ADDRESS_UNKNOWN
+        self.boot_version_address = self.BOOT_VERSION_ADDRESS_UNKNOWN
 
     def _write(self, *data):
         """
@@ -165,7 +167,8 @@ class STM32:
                 desc = yaml.safe_load(f)
                 self.uid_address = desc['UniversalID']['address']
                 self.flash_size_address = desc['FlashSize']['address']
-                self.flash_page_size = desc['Peripherals']['Flash']['PageSize']
+                self.flash_page_size = desc['Flash']['PageSize']
+                self.boot_version_address = desc['Bootloader']['ID']
 
     def debug(self, level, message):
         """
@@ -296,7 +299,7 @@ class STM32:
         self.debug(0, f"flash size {flash_size}")
         return flash_size
 
-    def get_version(self):
+    def get_protocol_version(self):
         """
         Return the bootloader version
 
@@ -305,10 +308,22 @@ class STM32:
         self.command(command=self.Command.GET_VERSION, description="Get version")
         data = self.uart.receive(3)
         self._wait_for_ack(f"{self.Command.GET_VERSION} end")
-        self.debug(5, "Bootloader version: " + hex(data[0]))
+        self.debug(5, "Bootloader protocol version: " + hex(data[0]))
         self.debug(5, "- Option byte 1: " + hex(data[1]))
         self.debug(5, "- Option byte 2: " + hex(data[2]))
         return data[1]
+
+    def get_bootloader_id(self):
+        """
+        Return the Bootloader ID.
+
+        Return BOOT_VERSION_ADDRESS_UNKNOWN if the bootloader's UID address is not known.
+        """
+        if self.boot_version_address == self.BOOT_VERSION_ADDRESS_UNKNOWN:
+            return self.BOOT_VERSION_ADDRESS_UNKNOWN
+        boot_id = hex(self.read_memory(self.boot_version_address, 1)[0])
+        self.debug(0, f"Bootloader version (Id) : {boot_id}")
+        return boot_id
 
     def read_memory(self, address, length):
         """
