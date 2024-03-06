@@ -8,7 +8,7 @@ FlashSize:
 UniversalID:
   address: 0x1FFF7590
 Flash:
-  PageSize: 1024
+  PageSize: 2048
 Bootloader:
   ID: 0x1FFF6FFE
   RAM:
