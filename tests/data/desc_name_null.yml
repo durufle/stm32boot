@@ -7,6 +7,5 @@ FlashSize:
   address: 0x1FFF75E0
 UniversalID:
   address: 0x1FF0F420
-Peripherals:
-  Flash:
-    PageSize: 1024
+Flash:
+  PageSize: 1024
