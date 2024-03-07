@@ -9,7 +9,7 @@ Test devices cli parameters
 """
 import os
 from typer.testing import CliRunner
-from stm32boot.devices import device_app
+from stmloader.devices import device_app
 
 runner = CliRunner()
 

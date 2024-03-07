@@ -9,7 +9,7 @@ Test loader cli parameters
 """
 
 from typer.testing import CliRunner
-from stm32boot.boot import boot_app
+from stmloader.boot import boot_app
 
 runner = CliRunner()
 
