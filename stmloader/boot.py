@@ -98,7 +98,7 @@ def write(ctx: typer.Context,
         ih.loadhex(file)
     # write a chunks
     data = ih.tobinarray()
-    ctx.obj.loader.write_memory_data(ih.minaddr(), data)
+    ctx.obj['loader'].write_memory_data(ih.minaddr(), data)
     if verify:
         length = ih.maxaddr() - ih.minaddr() + 1
         offset = ih.minaddr()
@@ -130,7 +130,7 @@ def erase(ctx: typer.Context,
     if ctx.obj is None or ctx.obj['reset'] is not True:
         raise typer.Exit()
     try:
-        if ctx.obj.loader.extended_erase and mode != EraseMode.NONE:
+        if ctx.obj['loader'].extended_erase and mode != EraseMode.NONE:
             ctx.obj['loader'].extended_erase_special(special=mode)
             raise typer.Exit()
         if address and length:

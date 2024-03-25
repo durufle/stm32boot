@@ -2,6 +2,8 @@ import os
 import sys
 import logging
 import argparse
+
+import scaffold
 import yaml
 import binascii
 from scaffold import Scaffold, TimeoutError
@@ -42,7 +44,11 @@ class Ceva:
         self.uart.transmit(binascii.unhexlify(data), trigger=self.trigger)
 
     def read(self, number=1):
-        return binascii.hexlify(self.uart.receive(number)).decode().upper()
+        try:
+            return binascii.hexlify(self.uart.receive(number)).decode().upper()
+        except scaffold.TimeoutError as e:
+            print(e)
+            sys.exit(-1)
 
     def command(self, data, number):
         self.uart.flush()
@@ -50,7 +56,7 @@ class Ceva:
         sleep(0.10)
         return self.read(number)
 
-    def reset(self, wait=0.1):
+    def reset(self, wait=0.1, frequency=1e6):
         """
         Perform a cold reset -  A complete power on and reset sequence
         """
@@ -60,6 +66,12 @@ class Ceva:
         var = self.boot1 << 0
         var = self.nrst << 0
         sleep(0.1)
+        # clock value > 0 -> external clock setting
+        if frequency > 0:
+            clock = self.scaffold.clock0
+            clock.frequency = frequency
+            clock.out >> self.scaffold.d10
+
         # dut power on and set rst signal
         self.scaffold.power.dut = 1
         sleep(0.1)
@@ -68,13 +80,14 @@ class Ceva:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='This script uses Scaffold to communicate CEVA')
+    parser = argparse.ArgumentParser(description='This script uses Scaffold to communicate CEVAL')
     parser.add_argument('-f', '--file', default='ceval_stm32l4xx.yaml', help='specify a yaml configuration file')
     parser.add_argument('-d', '--dev', default='/dev/ttyUSB0', help='scaffold serial device path')
     parser.add_argument('-i', '--iteration', default=1, help='command iteration number')
     parser.add_argument('-w', '--waiting', type=float, default=1, help='uart reception timeout')
     parser.add_argument('-t', '--trigger', action="store_true", default=False, help='uart transmission trigger')
     parser.add_argument('-c', '--command', default='aes', choices=['aes'], help='ceva command')
+    parser.add_argument('-ec', '--ext_clock', type=float, default=0, help='Target external clock frequency value')
     parser.add_argument('-l', '--log', action="store_true",  default=False, help='Enable or disable logging in file')
     args = parser.parse_args()
 
@@ -115,9 +128,7 @@ def main():
         sys.exit(-1)
 
     # power reset
-    ceva.reset()
-
-    #  print("-> {0}".format(ceva.command("FE8000000000", "", number=50)))
+    ceva.reset(frequency=args.ext_clock)
     ceva.trigger = args.trigger
 
     if args.command == 'aes':
