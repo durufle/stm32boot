@@ -35,7 +35,7 @@ classifiers = [
 ]
 
 [project.scripts]
-stmloader = "stm32boot.__main__:cli"
+stmloader = "stmloader.__main__:cli"
 
 [project.urls]
 Home = "https://github.com/durufle/stm32boot"
