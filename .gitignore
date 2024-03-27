@@ -6,3 +6,6 @@ __pycache__/
 .idea/
 .coverage
 venv/
+htmlcov/
+junit/
+coverage.xml
