@@ -2939,10 +2939,6 @@
 		(uuid "15246cb5-cc25-49bd-8ee5-5d8734c7d298")
 	)
 	(no_connect
-		(at 181.61 78.74)
-		(uuid "15dd787c-a046-4b41-b4d4-0edf70580a48")
-	)
-	(no_connect
 		(at 49.53 46.99)
 		(uuid "17101e0b-628e-46ea-ac0a-c6fa79dce9e3")
 	)
@@ -2959,20 +2955,12 @@
 		(uuid "1c75427f-2dc4-47c2-b6ed-38cd8c1f7339")
 	)
 	(no_connect
-		(at 181.61 81.28)
-		(uuid "1c7eb79b-e3b0-49bc-9745-e610acf70221")
-	)
-	(no_connect
 		(at 59.69 46.99)
 		(uuid "21500c7c-45b5-4b63-beb7-8ef815969ea9")
 	)
 	(no_connect
 		(at 251.46 76.2)
 		(uuid "218e505f-87bd-4338-b5f7-2b5b2082435b")
-	)
-	(no_connect
-		(at 181.61 76.2)
-		(uuid "2255a000-957f-4ad3-8fb0-bb64875cf8bc")
 	)
 	(no_connect
 		(at 181.61 91.44)
@@ -3334,6 +3322,16 @@
 	)
 	(wire
 		(pts
+			(xy 165.1 76.2) (xy 181.61 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1598996c-0a1e-4be7-90e8-fb258d6dccd5")
+	)
+	(wire
+		(pts
 			(xy 49.53 115.57) (xy 49.53 130.81)
 		)
 		(stroke
@@ -3481,6 +3479,16 @@
 			(type default)
 		)
 		(uuid "6f9aefc4-d363-40b6-bafb-30f41271fd30")
+	)
+	(wire
+		(pts
+			(xy 165.1 78.74) (xy 181.61 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "702bffc4-9601-4598-85d6-a50d41685e20")
 	)
 	(wire
 		(pts
@@ -3838,6 +3846,17 @@
 		)
 		(uuid "3bf67969-b8e5-430a-99b1-cee553f5842c")
 	)
+	(label "D4_MCU_PC14"
+		(at 166.37 78.74 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "3f12651b-245a-488a-92b5-977bf99605a2")
+	)
 	(label "D2_NRST"
 		(at 168.91 60.96 0)
 		(fields_autoplaced yes)
@@ -3848,6 +3867,17 @@
 			(justify left bottom)
 		)
 		(uuid "4be25413-d4f3-45f6-ba81-b9204d64a807")
+	)
+	(label "D3_MCU_PC13"
+		(at 166.37 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4ea7cecd-69b7-44af-98da-6d350c241df1")
 	)
 	(label "D4_MCU_PB1"
 		(at 168.91 88.9 0)

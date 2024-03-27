@@ -6,9 +6,11 @@ import argparse
 import scaffold
 import yaml
 import binascii
-from scaffold import Scaffold, TimeoutError
+import serial.tools.list_ports
+from scaffold import Scaffold
 from time import sleep
 from time import time
+from gooey import Gooey, GooeyParser
 
 
 class Ceva:
@@ -23,18 +25,20 @@ class Ceva:
 
     """
 
-    def __init__(self, timeout, trigger=False) -> None:
-        self.scaffold = Scaffold()
+    def __init__(self, timeout, dev, trigger=False) -> None:
+        self.scaffold = Scaffold(dev)
         self.scaffold.timeout = timeout
+        # Reset signal
         self.nrst = self.scaffold.d2
-
-        self.uart = self.scaffold.uart0
+        # boot signals
         self.boot0 = self.scaffold.d6
         self.boot1 = self.scaffold.d7
+        self.clock = self.scaffold.clock0
         # Connect the UART peripheral to D0 and D1.
+        self.uart = self.scaffold.uart0
         self.uart.rx << self.scaffold.d1
         self.scaffold.d0 << self.uart.tx
-        # Output trigger on D5
+        # Output uart trigger on D5
         self.scaffold.d5 << self.uart.trigger
         self.uart.baudrate = 115200
         self.uart.flush()
@@ -66,11 +70,10 @@ class Ceva:
         var = self.boot1 << 0
         var = self.nrst << 0
         sleep(0.1)
-        # clock value > 0 -> external clock setting
+        # clock value > 0 -> external clock s
         if frequency > 0:
-            clock = self.scaffold.clock0
-            clock.frequency = frequency
-            clock.out >> self.scaffold.d10
+            self.clock.frequency = frequency
+            self.clock.out >> self.scaffold.d4
 
         # dut power on and set rst signal
         self.scaffold.power.dut = 1
@@ -79,16 +82,24 @@ class Ceva:
         sleep(wait)
 
 
+@Gooey(program_name='CEVAL')
 def main():
-    parser = argparse.ArgumentParser(description='This script uses Scaffold to communicate CEVAL')
-    parser.add_argument('-f', '--file', default='ceval_stm32l4xx.yaml', help='specify a yaml configuration file')
-    parser.add_argument('-d', '--dev', default='/dev/ttyUSB0', help='scaffold serial device path')
+    parser = GooeyParser(description='This script uses Scaffold to communicate with CEVAL firmware')
+
+    # Create serial interface list
+    choices = []
+    ports = serial.tools.list_ports.comports()
+    for port, desc, hwid in sorted(ports):
+        choices.append(port)
+
+    parser.add_argument('-f', '--file', default='ceval_stm32l4xx.yaml', help='specify a yaml configuration file', widget='FileChooser')
+    parser.add_argument('-d', '--dev', choices=choices, help='scaffold serial device path')
     parser.add_argument('-i', '--iteration', default=1, help='command iteration number')
     parser.add_argument('-w', '--waiting', type=float, default=1, help='uart reception timeout')
     parser.add_argument('-t', '--trigger', action="store_true", default=False, help='uart transmission trigger')
-    parser.add_argument('-c', '--command', default='aes', choices=['aes'], help='ceva command')
-    parser.add_argument('-ec', '--ext_clock', type=float, default=0, help='Target external clock frequency value')
-    parser.add_argument('-l', '--log', action="store_true",  default=False, help='Enable or disable logging in file')
+    parser.add_argument('-s', '--scenario', default='aes', choices=['aes'], help='ceva command')
+    parser.add_argument('-c', '--clock', type=float, default=0, help='Target external clock frequency value')
+    parser.add_argument('-l', '--log', action="store_true", default=False, help='Enable or disable logging in file')
     args = parser.parse_args()
 
     # get script path
@@ -122,21 +133,21 @@ def main():
 
     try:
         # Connect to Scaffold board
-        ceva = Ceva(timeout=args.waiting)
+        ceva = Ceva(timeout=args.waiting, dev=args.dev)
     except Exception as e:
         print(e)
         sys.exit(-1)
 
     # power reset
-    ceva.reset(frequency=args.ext_clock)
+    ceva.reset(frequency=args.clock)
     ceva.trigger = args.trigger
 
-    if args.command == 'aes':
+    if args.scenario == 'aes':
         """
-        Test target command
+        Test aes command
         """
         for k in range(0, int(args.iteration)):
-            resp = ceva.command("FE8A00020020" + cfg['key'] + cfg['plain'], number=16)
+            resp = ceva.command("FE8A00020020" + cfg['aes']['key'] + cfg['aes']['plain'], number=16)
             log.info(f"{resp.strip()}, iteration={k + 1}")
 
 
