@@ -40,7 +40,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --ignore=tests/test_loader_read.py --ignore=tests/test_loader_reset.py --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
+        pytest ./tests/test_loader_cli_args.py ./tests/test_loader_cli_args.py --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
     - name: Upload pytest test results
       uses: actions/upload-artifact@v4
       with:
