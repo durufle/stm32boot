@@ -55,5 +55,6 @@ ignore="conf.py, ceval_stm32l4xx.py, test_loader_cli_args.py, test_devices_cli_a
 max-line-length = 120
 disable = "R0902, R0904, W0612, W0622"
 
-
+[tool.pytest.ini_options]
+addopts = "--cov --cov-append"
 

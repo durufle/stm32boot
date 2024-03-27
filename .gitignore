@@ -4,4 +4,5 @@ dist/
 tox/
 __pycache__/
 .idea/
+.coverage
 venv/
