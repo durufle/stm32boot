@@ -15,7 +15,7 @@ permissions:
 jobs:
   build:
 
-    runs-on: [self_hosted, linux, x64]
+    runs-on: self_hosted
 
     steps:
     - uses: actions/checkout@v3
