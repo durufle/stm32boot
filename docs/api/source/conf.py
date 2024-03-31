@@ -7,6 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../../../stmloader'))
 
 project = 'stmloader'
@@ -23,7 +24,8 @@ extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'sphinx_rtd_theme'
 ]
 
 templates_path = ['_templates']
@@ -34,7 +36,8 @@ source_suffix = '.rst'
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_logo = '_static/logo.png'
 
 autosummary_generate = True
