@@ -3,8 +3,6 @@
 # Copyright (C) 2024 Laurent Bonnet
 #
 # License: MIT
-
-
 """
 Bootloader command donjon-scaffold interface
 """
@@ -21,19 +19,27 @@ from progressbar import ProgressBar, Percentage, GranularBar, AdaptiveETA
 
 
 class STM32Error(Exception):
-    """Generic exception type for errors occurring in stm32loader."""
+    """
+    Generic exception type for errors occurring in stm32loader.
+    """
 
 
 class CommandError(STM32Error, IOError):
-    """Exception: a command in the STM32 native bootloader failed."""
+    """
+    Exception: a command in the STM32 native bootloader failed.
+    """
 
 
 class DataLengthError(STM32Error, ValueError):
-    """Exception: invalid data length given."""
+    """
+    Exception: invalid data length given.
+    """
 
 
 class PageIndexError(STM32Error, ValueError):
-    """Exception: invalid page index given."""
+    """
+    Exception: invalid page index given.
+    """
 
 
 class STM32:
@@ -48,17 +54,15 @@ class STM32:
     - D7: STM32 BOOT1 pin
 
     The uart0 peripheral of Scaffold board is used for serial communication
-    with the ST bootloader.
+    with the ST bootloader. This class can communicate with the ST bootloader.
 
-    This class can communicate with the ST bootloader via USART1. This allows
-    programming the Flash memory and then execute the loaded code.
     """
 
     @dataclasses.dataclass
     class Command:
-        """STM32 native bootloader command values."""
-
-        # See ST AN3155, AN4872
+        """
+        STM32 native bootloader command values.
+        """
         GET = 0x00
         GET_VERSION = 0x01
         GET_ID = 0x02
@@ -68,30 +72,30 @@ class STM32:
         ERASE = 0x43
         READOUT_PROTECT = 0x82
         READOUT_UNPROTECT = 0x92
-        # these not supported on BlueNRG
         EXTENDED_ERASE = 0x44
         WRITE_PROTECT = 0x63
         WRITE_UNPROTECT = 0x73
-        # not really listed under commands, but still...
-        # 'wake the bootloader' == 'activate USART' == 'synchronize'
+
         SYNCHRONIZE = 0x7F
 
     @dataclasses.dataclass
     class Reply:
-        """STM32 native bootloader reply status codes."""
+        """
+        STM32 native bootloader reply status codes.
+        """
         # See ST AN3155, AN4872
         ACK = 0x79
         NACK = 0x1F
 
     UID_SWAP = [[1, 0], [3, 2], [7, 6, 5, 4], [11, 10, 9, 8]]
-    # stmloader does not know the address for the unique ID.
     UID_ADDRESS_UNKNOWN = -1
-    # Part do not support flash size.
+    """stmloader does not know the address for the unique ID."""
     FLASH_SIZE_NOT_SUPPORTED = 0
-    # stmloader does not know the address for flash size.
+    """Part do not support flash size."""
     FLASH_SIZE_ADDRESS_UNKNOWN = -1
-    # default flash page size
+    """stmloader does not know the address for flash size."""
     FLASH_PAGE_SIZE_DEFAULT = 1024
+    """Default flash page size"""
     BOOT_VERSION_ADDRESS_UNKNOWN = -1
     DATA_TRANSFER_SIZE_DEFAULT = 256
     SYNCHRONIZE_ATTEMPTS = 2
@@ -99,8 +103,8 @@ class STM32:
     def __init__(self, scaffold, verbosity=5):
         """
         Command class constructor
-        @param scaffold: A scaffold object
-        @param verbosity: verbosity level
+        :param scaffold: A scaffold object
+        :param verbosity: verbosity level
         """
         self.scaffold = scaffold
         self.scaffold.timeout = 1
@@ -124,6 +128,7 @@ class STM32:
     def _write(self, *data):
         """
         Write the given data to the MCU.
+        :param data: data to write
         """
         for data_bytes in data:
             if isinstance(data_bytes, int):
@@ -133,6 +138,8 @@ class STM32:
     def _write_and_ack(self, message, *data):
         """
         Write data to the MCU and wait until it replies with ACK.
+        :param message: info which is set when error are thrown
+        :param data: data to write
         """
         # this is a separate method from write() because a keyword
         # argument after *args is not possible in Python 2
@@ -154,8 +161,7 @@ class STM32:
     def _search_device(self, identifier):
         """
         Search if identifier is a known DeviceId
-        @param identifier: Device ID number
-        @return:
+        :param identifier: Device ID number
         """
         path = os.path.join(os.path.dirname(__file__), 'data')
         # create file name to search
@@ -173,8 +179,8 @@ class STM32:
     def debug(self, level, message):
         """
         Print the given message if its level is low enough.
-        :@param level: level compare to verbose
-        :@param message: message to proit
+        :param level: level compare to verbose
+        :param message: message to print
         """
         if self.verbosity >= level:
             print(message, file=sys.stderr)
@@ -187,6 +193,7 @@ class STM32:
         respond, a Timeout exception is thrown by Scaffold. The device will not
         respond if it is locked in RDP2 state (Readout Protection level 2).
         statr
+        :param startup: startup waiting time
         """
         self.scaffold.power.dut = 0
         var = self.boot0 << 1
@@ -215,6 +222,7 @@ class STM32:
     def reset_from_flash(self, startup=0.1):
         """
         Power-cycle and reset target device and boot from user Flash memory.
+        :param startup: startup waiting time
         """
         self.scaffold.power.dut = 0
         var = self.boot0 << 0
@@ -231,6 +239,8 @@ class STM32:
         Send the given command to the MCU.
 
         Raise CommandError if there's no ACK replied.
+        :param command: Command to execute
+        :param description: Information description for error
         """
         self.debug(10, f"*** Command: {description}")
         ack_received = self._write_and_ack("Command", command, command ^ 0xFF)
@@ -282,7 +292,10 @@ class STM32:
 
     @classmethod
     def format_uid(cls, uid):
-        """Return a readable string from the given UID."""
+        """
+        Return a readable string from the given UID.
+        @param uid: Universal ID
+        """
         if uid == cls.UID_ADDRESS_UNKNOWN:
             return "UID address unknown"
 
@@ -317,7 +330,7 @@ class STM32:
         """
         Return the Bootloader ID.
 
-        Return BOOT_VERSION_ADDRESS_UNKNOWN if the bootloader's UID address is not known.
+        :return : BOOT_VERSION_ADDRESS_UNKNOWN if the bootloader's UID address is not known.
         """
         if self.boot_version_address == self.BOOT_VERSION_ADDRESS_UNKNOWN:
             return self.BOOT_VERSION_ADDRESS_UNKNOWN
@@ -325,7 +338,7 @@ class STM32:
         self.debug(0, f"Bootloader version (Id) : {boot_id}")
         return boot_id
 
-    def read_memory(self, address, length):
+    def read_memory(self, address, length) -> bytearray:
         """
         Return the memory contents of flash at the given address.
 
@@ -333,6 +346,7 @@ class STM32:
 
         :param address: Memory address to be read.
         :param length: Number of bytes to be read.
+        :return: data from device in bytearray format
         """
         if length > self.data_transfer_size:
             raise DataLengthError("Can not read more than 256 bytes at once.")
@@ -404,6 +418,8 @@ class STM32:
         Write the given data to flash.
 
         Data length may be more than 256 bytes.
+        :param address: target address
+        :param data: data to write
         """
         length = len(data)
         chunk_count = int(math.ceil(length / float(self.data_transfer_size)))
@@ -452,7 +468,10 @@ class STM32:
         self.reset_from_system_memory()
 
     def write_protect(self, pages):
-        """Enable write protection on the given flash pages."""
+        """
+        Enable write protection on the given flash pages.
+        :param pages: list of page number to protect
+        """
         self.command(self.Command.WRITE_PROTECT, "Write protect")
         nr_of_pages = (len(pages) - 1) & 0xFF
         page_numbers = bytearray(pages)
@@ -469,6 +488,7 @@ class STM32:
     def extended_erase_pages(self, pages=None):
         """
         Execute the Extended Erase command to erase all the Flash memory of the device.
+        @param pages: list of page number to erase.
         """
         self.command(self.Command.EXTENDED_ERASE, "Extended erase memory")
         if pages:
@@ -498,6 +518,7 @@ class STM32:
     def extended_erase_special(self, special=None):
         """
         Execute the Extended Erase command to erase all the Flash memory of the device.
+        :param special: special erase mode.
         """
         self.command(self.Command.EXTENDED_ERASE, "Extended erase memory")
         if special == 'mass':
@@ -525,7 +546,6 @@ class STM32:
 
         Set pages to None to erase the full memory.
         :param iterable pages: Iterable of integer page addresses, zero-based.
-          Set to None to trigger global mass erase.
         """
         self.command(self.Command.ERASE, "Erase memory")
         if pages:
@@ -557,7 +577,11 @@ class STM32:
         self._write_and_ack("0x21 go failed", self._encode_address(address))
 
     def pages_from_range(self, start, end):
-        """Return page indices for the given memory range."""
+        """
+        Return page indices for the given memory range.
+        :param start: starting  address
+        :param end: ending address
+        """
         if start % self.flash_page_size != 0:
             raise PageIndexError(f"Erase start address should be at a flash page boundary: 0x{start:08X}.")
         if end % self.flash_page_size != 0:
@@ -572,7 +596,10 @@ class STM32:
         return pages
 
     def _wait_for_ack(self, info=""):
-        """Read a byte and raise CommandError if it's not ACK."""
+        """
+        Read a byte and raise CommandError if it's not ACK.
+        :param info: information description for error
+        """
         reply = self.uart.receive(1)[0]
         if not reply:
             raise CommandError("Can't read port or timeout")
@@ -585,7 +612,10 @@ class STM32:
 
     @staticmethod
     def _encode_address(address):
-        """Return the given address as big-endian bytes with a checksum."""
+        """
+        Return the given address as big-endian bytes with a checksum.
+        :param address: address to process
+        """
         # address in four bytes, big-endian
         address_bytes = bytearray(struct.pack(">I", address))
         # checksum as single byte

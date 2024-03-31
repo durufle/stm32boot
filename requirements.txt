@@ -4,3 +4,4 @@ progressbar2
 intelhex
 pyyaml
 cerberus
+sphinx-rtd-theme

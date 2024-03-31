@@ -60,7 +60,6 @@ def list(ctx: typer.Context):
     """
     List supported devices
     """
-
     devices = []
 
     for f in ctx.obj['files']:
@@ -114,7 +113,7 @@ def add(ctx: typer.Context,
 def main(ctx: typer.Context):
     """
     Application callback
-    @param ctx: application context
+    :param ctx: application context
     """
     path = os.path.join(os.path.dirname(__file__), 'data')
     # create list of devices files found in data folder
