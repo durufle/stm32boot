@@ -1,7 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/durufle/stm32boot/.github%2Fworkflows%2Fpylint.yml?label=lint)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/durufle/stm32boot/.github%2Fworkflows%2Fpython-app.yml?label=unittest)
-
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/durufle/stm32boot/.github%2Fworkflows%2Fpylint.yml?label=pylint)
 
 # STM32 Bootloader utility with scaffold v1.1
 
