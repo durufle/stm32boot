@@ -25,13 +25,13 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
 ]
 
 templates_path = ['_templates']
 exclude_patterns = []
 
-source_suffix = '.rst'
+source_suffix = {'.rst': 'restructuredtext',}
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
