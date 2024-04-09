@@ -307,7 +307,7 @@ class STM32:
         """Return the MCU flash size in bytes."""
         if self.flash_size_address == self.FLASH_SIZE_ADDRESS_UNKNOWN:
             return self.FLASH_SIZE_NOT_SUPPORTED
-        flash_size_bytes = self.read_memory(self.flash_size_address, 2)
+        flash_size_bytes = self.read_memory(self.flash_size_address, 4)
         flash_size = flash_size_bytes[0] + (flash_size_bytes[1] << 8)
         self.debug(0, f"flash size {flash_size}")
         return flash_size
@@ -316,21 +316,25 @@ class STM32:
         """
         Return the bootloader version
 
-        Read protection status readout is not yet implemented.
+        This command is used to get the protocol version. After receiving the command, the
+        bootloader transmits the version, and two bytes (for legacy compatibility, both bytes are 0).
         """
         self.command(command=self.Command.GET_VERSION, description="Get version")
         data = self.uart.receive(3)
         self._wait_for_ack(f"{self.Command.GET_VERSION} end")
         self.debug(5, "Bootloader protocol version: " + hex(data[0]))
-        self.debug(5, "- Option byte 1: " + hex(data[1]))
-        self.debug(5, "- Option byte 2: " + hex(data[2]))
+        self.debug(10, "- Option byte 1: " + hex(data[1]))
+        self.debug(10, "- Option byte 2: " + hex(data[2]))
         return data[1]
 
     def get_bootloader_id(self):
         """
         Return the Bootloader ID.
 
-        :return : BOOT_VERSION_ADDRESS_UNKNOWN if the bootloader's UID address is not known.
+        This command is used to get the version of the chip ID (identification). When the bootloader
+        receives the command, it transmits the product ID to the host.
+
+        :return : BOOT_VERSION_ADDRESS_UNKNOWN if the bootloader's ID address is not known.
         """
         if self.boot_version_address == self.BOOT_VERSION_ADDRESS_UNKNOWN:
             return self.BOOT_VERSION_ADDRESS_UNKNOWN
@@ -416,8 +420,8 @@ class STM32:
     def write_memory_data(self, address, data):
         """
         Write the given data to flash.
+        Data length may be more than 256 bytes
 
-        Data length may be more than 256 bytes.
         :param address: target address
         :param data: data to write
         """
@@ -469,7 +473,8 @@ class STM32:
 
     def write_protect(self, pages):
         """
-        Enable write protection on the given flash pages.
+        Enable write protection on the given flash pages
+
         :param pages: list of page number to protect
         """
         self.command(self.Command.WRITE_PROTECT, "Write protect")
@@ -578,7 +583,8 @@ class STM32:
 
     def pages_from_range(self, start, end):
         """
-        Return page indices for the given memory range.
+        Return page indices for the given memory range
+
         :param start: starting  address
         :param end: ending address
         """

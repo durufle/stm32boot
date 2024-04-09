@@ -1,0 +1,14 @@
+DeviceID: 0x482
+Name: 'STM32U575/STM32U585'
+Series: 'STM32U5'
+CPU: 'Cortex-M33'
+Description: 'ARM 32-bit Cortex-M33 based device'
+FlashSize:
+  address: 0x0BFA07A0
+UniversalID:
+  address: 0x00000000
+Flash:
+  PageSize: 8192
+Bootloader:
+  ID: 0x0BF99EFE
+
