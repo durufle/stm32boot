@@ -1,5 +1,5 @@
-:mod:`api`
-==========
+:mod:`API`
+**********
 
 .. automodule:: bootloader
    :members:

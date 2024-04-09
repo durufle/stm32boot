@@ -7,10 +7,12 @@ Welcome to stmloader API's documentation!
 =========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    bootloader.rst
+   examples.rst
+   cli.rst
 
 Indices and tables
 ==================
