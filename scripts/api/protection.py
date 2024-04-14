@@ -1,12 +1,25 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2024 Laurent Bonnet
+#
+# License: MIT
+"""
+Example on readout protection command
+"""
 import sys
 import argparse
-from stmloader.bootloader import STM32, CommandError
 from scaffold import Scaffold
+from stmloader.bootloader import STM32, CommandError
 
 
 def main():
-    parser = argparse.ArgumentParser(description='This script uses Scaffold to communicate with CEVAL firmware')
-    parser.add_argument('-m', '--mode', default='unprotect', choices=['unprotect', 'protect'], help='readout protection')
+    """
+    protect - unprotect readout
+    @return:
+    """
+    parser = argparse.ArgumentParser(description='Enable / Disable readout protection')
+    parser.add_argument('-m', '--mode', default='unprotect', choices=['unprotect', 'protect'],
+                        help='readout protection')
     args = parser.parse_args()
 
     # Open connection with scaffold (port auto-detection)

@@ -73,7 +73,7 @@ class Ceva:
         # clock value > 0 -> external clock s
         if frequency > 0:
             self.clock.frequency = frequency
-            self.clock.out >> self.scaffold.d4
+            self.clock.out >> self.scaffold.a0
 
         # dut power on and set rst signal
         self.scaffold.power.dut = 1
@@ -98,7 +98,7 @@ def main():
     parser.add_argument('-w', '--waiting', type=float, default=1, help='uart reception timeout')
     parser.add_argument('-t', '--trigger', action="store_true", default=False, help='uart transmission trigger')
     parser.add_argument('-s', '--scenario', default='aes', choices=['aes'], help='ceva command')
-    parser.add_argument('-c', '--clock', type=float, default=0, help='Target external clock frequency value')
+    parser.add_argument('-c', '--clock', type=float, default=1e6, help='Target external clock frequency value')
     parser.add_argument('-l', '--log', action="store_true", default=False, help='Enable or disable logging in file')
     args = parser.parse_args()
 

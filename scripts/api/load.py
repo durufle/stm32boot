@@ -1,10 +1,22 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2024 Laurent Bonnet
+#
+# License: MIT
+"""
+Example on load meory command
+"""
 import sys
 from intelhex import IntelHex
-from stmloader.bootloader import STM32, CommandError
 from scaffold import Scaffold
+from stmloader.bootloader import STM32
 
 
 def main():
+    """
+    Load test file in memory
+    @return:
+    """
     # Open connection with scaffold (port auto-detection)
     loader = STM32(Scaffold())
     # Reset to system memory and get Chip id.

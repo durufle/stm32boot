@@ -1,9 +1,21 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2024 Laurent Bonnet
+#
+# License: MIT
+"""
+Exemple on connect dveice
+"""
 import sys
-from stmloader.bootloader import STM32, CommandError
 from scaffold import Scaffold
+from stmloader.bootloader import STM32
 
 
 def main():
+    """
+    Simple connection - get commands
+    @return:
+    """
     # Open connection with scaffold (port auto-detection)
     loader = STM32(Scaffold())
     # Reset to system memory and get Chip id.
