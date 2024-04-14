@@ -1,5 +1,5 @@
-:mod:`Examples`
-***************
+Examples
+********
 
 Simple connection
 =================

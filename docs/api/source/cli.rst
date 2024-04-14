@@ -1,5 +1,5 @@
-:mod:`stmloader cli`
-********************
+stmloader utility
+*****************
 
 .. note::
     By default, only typer package is installed. You can install rich, and you can have nicely formatted outputs.
@@ -26,7 +26,7 @@ screen capture).
       loader   stm32 bootloader cli
     $
 
-For each, it is possible to list all implemented command as follows:
+For each, it is possible to list all implemented sub-command as follows:
 
 .. code-block:: console
     :caption: loader help

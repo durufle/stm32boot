@@ -10,9 +10,9 @@ Welcome to stmloader API's documentation!
    :maxdepth: 3
    :caption: Contents:
 
-   bootloader.rst
-   examples.rst
    cli.rst
+   api.rst
+   examples.rst
 
 Indices and tables
 ==================
