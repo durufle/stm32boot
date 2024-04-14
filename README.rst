@@ -6,7 +6,7 @@ Python module to upload or download firmware to / from ST Microelectronics STM32
 Installation
 ************
 
-.. code-block:: bash
+.. code-block::
 
     pip install ragnarok_stmloader
 
@@ -21,7 +21,7 @@ stmloader utility usage
 
 general usage:
 
-.. code-block:: bash
+.. code-block::
 
     Usage: stmloader [OPTIONS] COMMAND [ARGS]...
 
@@ -40,7 +40,7 @@ general usage:
 
 loader usage:
 
-.. code-block:: bash
+.. code-block::
 
     Usage: stmloader loader [OPTIONS] COMMAND1 [ARGS]... [COMMAND2
                                       [ARGS]...]...
@@ -64,7 +64,7 @@ loader usage:
 
 devices usage:
 
-.. code-block:: bash
+.. code-block::
 
     Usage: stmloader devices [OPTIONS] COMMAND [ARGS]...
 
