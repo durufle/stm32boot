@@ -12,7 +12,7 @@ Installation
 
 To install the latest development version
 
-.. code-block:: bash
+.. code-block::
 
     pip install git+https://github.com/durufle/stm32boot.git
 
