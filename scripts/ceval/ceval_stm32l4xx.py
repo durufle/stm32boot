@@ -1,9 +1,9 @@
 import os
 import sys
 import logging
-import argparse
+import numpy as np
 
-import scaffold
+from scaffold import *
 import yaml
 import binascii
 import serial.tools.list_ports
@@ -22,10 +22,12 @@ class Ceva:
     D2: RST PIN
     D4: Pulse start
     D5: Pulse Out
+    D6: Boot 0
+    D7: Boot 1
 
     """
 
-    def __init__(self, timeout, dev, trigger=False) -> None:
+    def __init__(self, timeout, dev) -> None:
         self.scaffold = Scaffold(dev)
         self.scaffold.timeout = timeout
         # Reset signal
@@ -33,24 +35,21 @@ class Ceva:
         # boot signals
         self.boot0 = self.scaffold.d6
         self.boot1 = self.scaffold.d7
-        self.clock = self.scaffold.clock0
         # Connect the UART peripheral to D0 and D1.
         self.uart = self.scaffold.uart0
         self.uart.rx << self.scaffold.d1
-        self.scaffold.d0 << self.uart.tx
-        # Output uart trigger on D5
-        self.scaffold.d5 << self.uart.trigger
+        self.uart.tx >> self.scaffold.d0
+
         self.uart.baudrate = 115200
         self.uart.flush()
-        self.trigger = trigger
 
     def send(self, data):
-        self.uart.transmit(binascii.unhexlify(data), trigger=self.trigger)
+        self.uart.transmit(binascii.unhexlify(data), trigger=True)
 
     def read(self, number=1):
         try:
             return binascii.hexlify(self.uart.receive(number)).decode().upper()
-        except scaffold.TimeoutError as e:
+        except TimeoutError as e:
             print(e)
             sys.exit(-1)
 
@@ -60,7 +59,7 @@ class Ceva:
         sleep(0.10)
         return self.read(number)
 
-    def reset(self, wait=0.1, frequency=1e6):
+    def reset(self, wait=0.1):
         """
         Perform a cold reset -  A complete power on and reset sequence
         """
@@ -70,16 +69,20 @@ class Ceva:
         var = self.boot1 << 0
         var = self.nrst << 0
         sleep(0.1)
-        # clock value > 0 -> external clock s
-        if frequency > 0:
-            self.clock.frequency = frequency
-            self.clock.out >> self.scaffold.a0
 
         # dut power on and set rst signal
         self.scaffold.power.dut = 1
         sleep(0.1)
         var = self.nrst << 1
         sleep(wait)
+
+    def pulse(self, delay=10e-9):
+        # Connect scaffold peripherals
+        pgen = self.scaffold.pgen0
+        self.uart.trigger >> pgen.start
+        pgen.out >> self.scaffold.d5
+        pgen.delay = delay
+        pgen.width = 100e-9
 
 
 @Gooey(program_name='CEVAL')
@@ -92,13 +95,12 @@ def main():
     for port, desc, hwid in sorted(ports):
         choices.append(port)
 
-    parser.add_argument('-f', '--file', default='ceval_stm32l4xx.yaml', help='specify a yaml configuration file', widget='FileChooser')
+    parser.add_argument('-f', '--file', default='ceval_stm32l4xx.yaml', help='specify a yaml configuration file',
+                        widget='FileChooser')
     parser.add_argument('-d', '--dev', choices=choices, help='scaffold serial device path')
     parser.add_argument('-i', '--iteration', default=1, help='command iteration number')
     parser.add_argument('-w', '--waiting', type=float, default=1, help='uart reception timeout')
-    parser.add_argument('-t', '--trigger', action="store_true", default=False, help='uart transmission trigger')
     parser.add_argument('-s', '--scenario', default='aes', choices=['aes'], help='ceva command')
-    parser.add_argument('-c', '--clock', type=float, default=1e6, help='Target external clock frequency value')
     parser.add_argument('-l', '--log', action="store_true", default=False, help='Enable or disable logging in file')
     args = parser.parse_args()
 
@@ -139,16 +141,21 @@ def main():
         sys.exit(-1)
 
     # power reset
-    ceva.reset(frequency=args.clock)
-    ceva.trigger = args.trigger
+    ceva.reset()
 
     if args.scenario == 'aes':
         """
         Test aes command
         """
-        for k in range(0, int(args.iteration)):
-            resp = ceva.command("FE8A00020020" + cfg['aes']['key'] + cfg['aes']['plain'], number=16)
-            log.info(f"{resp.strip()}, iteration={k + 1}")
+        if cfg['type'] == 'iterate':
+            for k in range(0, int(args.iteration)):
+                resp = ceva.command("FE8A00020020" + cfg['aes']['key'] + cfg['aes']['plain'], number=16)
+                log.info(f"{resp.strip()}, iteration={k + 1}")
+        if cfg['type'] == 'trigger':
+            for delay in np.arange(cfg['delay']['min'], cfg['delay']['max'], cfg['delay']['step']):
+                ceva.pulse(delay=delay)
+                resp = ceva.command("FE8A00020020" + cfg['aes']['key'] + cfg['aes']['plain'], number=16)
+                log.info(f"{resp.strip()}, delay={delay}")
 
 
 if __name__ == "__main__":
