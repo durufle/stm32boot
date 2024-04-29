@@ -11,6 +11,207 @@
 		(comment 1 "Under LGPL v3 license")
 	)
 	(lib_symbols
+		(symbol "Connector:Conn_01x03_Pin"
+			(pin_names
+				(offset 1.016) hide)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x03_Pin"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x03, script generated"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x03_Pin_1_1"
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0.8636 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 0.8636 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 2.54) (xy 0.8636 2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 0.8636 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(pin passive line
+					(at 5.08 2.54 180)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Device:R"
 			(pin_numbers hide)
 			(pin_names
@@ -1155,7 +1356,7 @@
 				)
 			)
 		)
-		(symbol "power:+5V"
+		(symbol "power:VDDA"
 			(power)
 			(pin_numbers hide)
 			(pin_names
@@ -1172,7 +1373,7 @@
 					(hide yes)
 				)
 			)
-			(property "Value" "+5V"
+			(property "Value" "VDDA"
 				(at 0 3.556 0)
 				(effects
 					(font
@@ -1198,7 +1399,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(property "Description" "Power symbol creates a global label with name \"VDDA\""
 				(at 0 0 0)
 				(effects
 					(font
@@ -1216,7 +1417,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "+5V_0_1"
+			(symbol "VDDA_0_1"
 				(polyline
 					(pts
 						(xy -0.762 1.27) (xy 0 2.54)
@@ -1254,122 +1455,11 @@
 					)
 				)
 			)
-			(symbol "+5V_1_1"
+			(symbol "VDDA_1_1"
 				(pin power_in line
 					(at 0 0 90)
 					(length 0)
 					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-		)
-		(symbol "stm32f205-rescue:+3V3-power"
-			(power)
-			(pin_names
-				(offset 0)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "#PWR"
-				(at 0 -3.81 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Value" "+3V3-power"
-				(at 0 3.556 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "+3V3-power_0_1"
-				(polyline
-					(pts
-						(xy -0.762 1.27) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 0) (xy 0 2.54)
-					)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 2.54) (xy 0.762 1.27)
-					)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "+3V3-power_1_1"
-				(pin power_in line
-					(at 0 0 90)
-					(length 0) hide
-					(name "+3V3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3084,6 +3174,16 @@
 	)
 	(wire
 		(pts
+			(xy 142.24 43.18) (xy 142.24 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2bca0bb3-e8e6-4537-b5e6-891fe55b0fe8")
+	)
+	(wire
+		(pts
 			(xy 172.72 111.76) (xy 173.99 111.76)
 		)
 		(stroke
@@ -3284,6 +3384,16 @@
 	)
 	(wire
 		(pts
+			(xy 132.08 46.99) (xy 132.08 43.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7546f227-946a-4ecb-bd6e-c4009ea2038e")
+	)
+	(wire
+		(pts
 			(xy 142.24 95.25) (xy 161.29 95.25)
 		)
 		(stroke
@@ -3374,7 +3484,7 @@
 	)
 	(wire
 		(pts
-			(xy 144.78 52.07) (xy 144.78 58.42)
+			(xy 144.78 43.18) (xy 144.78 58.42)
 		)
 		(stroke
 			(width 0)
@@ -3394,7 +3504,7 @@
 	)
 	(wire
 		(pts
-			(xy 72.39 97.79) (xy 72.39 100.33)
+			(xy 72.39 93.98) (xy 72.39 100.33)
 		)
 		(stroke
 			(width 0)
@@ -3454,6 +3564,16 @@
 	)
 	(wire
 		(pts
+			(xy 142.24 46.99) (xy 132.08 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f7de73b4-0033-439d-99a0-2ff4c0c6a948")
+	)
+	(wire
+		(pts
 			(xy 72.39 115.57) (xy 72.39 118.11)
 		)
 		(stroke
@@ -3482,6 +3602,30 @@
 		)
 		(uuid "fda48d35-915d-414d-b6cc-4b29a8bf50f1")
 	)
+	(rectangle
+		(start 165.1 109.22)
+		(end 189.23 134.62)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 78fa00ef-8606-4aa0-9791-8b63de7e2402)
+	)
+	(rectangle
+		(start 139.7 57.15)
+		(end 152.4 66.04)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 956e3b02-7f7a-4459-9b21-8f7c32666c72)
+	)
 	(text "DUT power\ncontrolled by the FPGA"
 		(exclude_from_sim no)
 		(at 76.2 95.25 0)
@@ -3492,6 +3636,17 @@
 			(justify left bottom)
 		)
 		(uuid "0fa317be-5391-4987-a8aa-316cdb150472")
+	)
+	(text "Crystal oscillator\nOptional if external clock present "
+		(exclude_from_sim no)
+		(at 175.006 140.208 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "316159d0-31db-449b-8cfa-c0f53b8c7ed5")
 	)
 	(text "Virtual ground for DUT\ncurrent measurement"
 		(exclude_from_sim no)
@@ -4151,6 +4306,7 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x10_P2.54mm_Vertical"
@@ -4274,6 +4430,7 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
 			)
 		)
 		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x10_P2.54mm_Vertical"
@@ -4367,71 +4524,6 @@
 			(project "AtMega328p"
 				(path "/4fc94e71-da2e-4d6c-a55a-b904c4759139"
 					(reference "J2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "stm32f205-rescue:+3V3-power")
-		(at 72.39 97.79 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "00000000-0000-0000-0000-00005d38100b")
-		(property "Reference" "#PWR0101"
-			(at 72.39 101.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 72.771 93.3958 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 72.39 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 72.39 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 72.39 97.79 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "38f16fd9-8526-4965-b68e-f3db99e5247b")
-		)
-		(instances
-			(project "AtMega328p"
-				(path "/4fc94e71-da2e-4d6c-a55a-b904c4759139"
-					(reference "#PWR0101")
 					(unit 1)
 				)
 			)
@@ -7622,72 +7714,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+5V")
-		(at 144.78 52.07 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "09506f06-ee2c-40ae-80cd-c2443f2db0e8")
-		(property "Reference" "#PWR02"
-			(at 144.78 55.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5V"
-			(at 144.78 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 144.78 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 144.78 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 144.78 52.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "38467856-f96c-4f1d-b3d6-f390baa82d9c")
-		)
-		(instances
-			(project "AtMega328p"
-				(path "/4fc94e71-da2e-4d6c-a55a-b904c4759139"
-					(reference "#PWR02")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "MAX4619CPE_:MAX4619CPE_")
 		(at 209.55 63.5 0)
 		(unit 1)
@@ -7947,6 +7973,77 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:Conn_01x03_Pin")
+		(at 144.78 38.1 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "476eede5-d238-45c4-b7e4-7e9ac139c2e2")
+		(property "Reference" "J3"
+			(at 144.78 33.02 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x03_Pin"
+			(at 144.78 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 144.78 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 144.78 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x03, script generated"
+			(at 144.78 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "3f3ed263-ba9e-4137-8875-d6bed0692b6a")
+		)
+		(pin "2"
+			(uuid "88cf1fd4-4c8f-43a8-a506-1f81d3b7cc11")
+		)
+		(pin "1"
+			(uuid "ffbc94a8-8a72-4fcf-9077-d55a797e5247")
+		)
+		(instances
+			(project "AtMega328p"
+				(path "/4fc94e71-da2e-4d6c-a55a-b904c4759139"
+					(reference "J3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "MCU_Microchip_ATmega:ATmega328P-P")
 		(at 127 110.49 0)
 		(unit 1)
@@ -7954,10 +8051,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "49779cc2-5350-444b-9859-06941b1683af")
 		(property "Reference" "U2"
-			(at 105.41 76.362 0)
+			(at 113.03 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7965,7 +8061,7 @@
 			)
 		)
 		(property "Value" "ATmega328P-P"
-			(at 105.41 78.902 0)
+			(at 112.522 70.104 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7979,6 +8075,7 @@
 					(size 1.27 1.27)
 					(italic yes)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega328_P%20AVR%20MCU%20with%20picoPower%20Technology%20Data%20Sheet%2040001984A.pdf"
@@ -8093,6 +8190,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:VDDA")
+		(at 72.39 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "50febd2b-a915-4d22-ab48-3cbeb5c0a8c8")
+		(property "Reference" "#PWR03"
+			(at 72.39 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDDA"
+			(at 72.39 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 72.39 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 72.39 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDDA\""
+			(at 72.39 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b85631b2-9a04-479a-837a-f182e3abbfa9")
+		)
+		(instances
+			(project "AtMega328p"
+				(path "/4fc94e71-da2e-4d6c-a55a-b904c4759139"
+					(reference "#PWR03")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "stm32f205-rescue:PWR_FLAG-power")
 		(at 165.1 86.36 270)
 		(unit 1)
@@ -8153,6 +8316,72 @@
 			(project "AtMega328p"
 				(path "/4fc94e71-da2e-4d6c-a55a-b904c4759139"
 					(reference "#FLG01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VDDA")
+		(at 132.08 43.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "cc0563dc-6abd-4e0a-a239-12807e8db71e")
+		(property "Reference" "#PWR02"
+			(at 132.08 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VDDA"
+			(at 132.08 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 132.08 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 132.08 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"VDDA\""
+			(at 132.08 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7e179768-fc2d-4be9-aa1f-05fdcbfee3fc")
+		)
+		(instances
+			(project "AtMega328p"
+				(path "/4fc94e71-da2e-4d6c-a55a-b904c4759139"
+					(reference "#PWR02")
 					(unit 1)
 				)
 			)
